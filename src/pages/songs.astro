@@ -1,0 +1,52 @@
+---
+import { getCollection } from 'astro:content';
+import Room from '../layouts/Room.astro';
+const songs = await getCollection('songs');
+const listen = (s: { title: string; artist: string; link?: string }) =>
+  s.link ?? `https://open.spotify.com/search/${encodeURIComponent(`${s.title} ${s.artist}`)}`;
+---
+<Room card="star" title="On repeat" intro="Songs I keep coming back to, and why each one stuck.">
+  <ol class="tracks">
+    {songs.map((s, i) => (
+      <li style={`--d:${i * 0.08}s`}>
+        <span class="no">{String(i + 1).padStart(2, '0')}</span>
+        <div class="disc" aria-hidden="true"></div>
+        <div class="txt">
+          <h2>{s.data.title}</h2>
+          <p class="artist">{s.data.artist}</p>
+          <p class="why">{s.data.why}</p>
+        </div>
+        <a class="play" href={listen(s.data)} target="_blank" rel="noopener">Listen<span class="visually-hidden"> to {s.data.title} on Spotify</span></a>
+      </li>
+    ))}
+  </ol>
+</Room>
+
+<style>
+  .tracks { list-style: none; margin: 0; padding: 0; max-width: 42rem; border-top: 1px solid var(--hair); }
+  li {
+    display: grid; grid-template-columns: 2rem 3.2rem minmax(0, 1fr) auto; gap: 1.1rem; align-items: center;
+    padding: 1.2rem 0; border-bottom: 1px solid var(--hair); animation: rise .8s cubic-bezier(.2, .7, .2, 1) var(--d) both;
+  }
+  .no { font: 400 .8rem var(--ui); color: var(--gilt); font-variant-numeric: tabular-nums; letter-spacing: .1em; }
+  .disc {
+    width: 3.2rem; aspect-ratio: 1; border-radius: 50%;
+    background: radial-gradient(circle, var(--pearl) 0 9%, #b08a46 10% 22%, #2b2530 23% 25%, #1f1a24 26% 100%);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), 0 .4rem .8rem -.3rem rgba(43, 37, 48, .5);
+    position: relative; transition: transform 1.2s cubic-bezier(.2, .7, .2, 1);
+  }
+  .disc::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 30deg, transparent 0 10%, rgba(255,255,255,.18) 14%, transparent 20% 60%, rgba(255,255,255,.12) 64%, transparent 70%); }
+  li:hover .disc { transform: rotate(240deg); }
+  h2 { margin: 0; font: italic 400 1.45rem/1.2 var(--display); }
+  .artist { margin: .1rem 0 0; font: 500 .68rem var(--ui); letter-spacing: .18em; text-transform: uppercase; color: var(--haze); }
+  .why { margin: .45rem 0 0; color: var(--ink); font-size: .96rem; }
+  .play { font: 400 .7rem var(--ui); letter-spacing: .18em; text-transform: uppercase; text-decoration: none; padding: .55rem .9rem; border: 1px solid var(--hair); border-radius: 99px; transition: background .4s, color .4s; }
+  .play:hover { background: var(--ink); color: var(--pearl); }
+  @keyframes rise { from { opacity: 0; transform: translateY(12px); } }
+  @media (max-width: 520px) {
+    li { grid-template-columns: 2.6rem minmax(0, 1fr); }
+    .no { display: none; }
+    .disc { width: 2.6rem; }
+    .play { grid-column: 2; justify-self: start; }
+  }
+</style>

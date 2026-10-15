@@ -1,0 +1,97 @@
+---
+import { getCollection } from 'astro:content';
+import Room from '../layouts/Room.astro';
+const books = await getCollection('books');
+// cloth colours for the spines, chosen to sit quietly on pearl
+const cloth = ['#6e2f3a', '#2f3f5c', '#6d7a5e', '#b08a46', '#5a3d5c', '#46545f', '#a8665e', '#3e5a55', '#7b5b3a'];
+const sizes = books.map((b, i) => {
+  let h = 0; for (const ch of b.data.title) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  return { height: 13 + (h % 5) * 0.9, width: 2.4 + ((h >> 3) % 4) * 0.35, color: cloth[i % cloth.length] };
+});
+---
+<Room card="priestess" title="The shelf" intro="The books that rearranged my head. Pull one out to read what I thought of it." wide>
+  <div class="library">
+    <div class="shelf" role="tablist" aria-label="Books">
+      {books.map((b, i) => (
+        <button
+          type="button" role="tab" class:list={['spine', b.data.status]} id={`spine-${b.id}`}
+          aria-selected={i === 0 ? 'true' : 'false'} aria-controls={`book-${b.id}`}
+          style={`--h:${sizes[i].height}rem; --w:${sizes[i].width}rem; --c:${sizes[i].color}; --d:${i * 0.06}s`}
+        >
+          <span class="t">{b.data.title}</span>
+          <span class="a">{b.data.author}</span>
+        </button>
+      ))}
+    </div>
+    <div class="ledge" aria-hidden="true"></div>
+
+    <div class="pages">
+      {books.map((b, i) => (
+        <article class="page" id={`book-${b.id}`} role="tabpanel" aria-labelledby={`spine-${b.id}`} hidden={i !== 0}>
+          <p class="status">{b.data.status === 'reading' ? 'Reading now' : b.data.status === 'quit' ? 'Put down, unfinished' : 'Read'}</p>
+          <h2>{b.data.title}</h2>
+          <p class="author">{b.data.author}</p>
+          <p class="note">{b.data.note}</p>
+          {b.data.line && <blockquote>{b.data.line}</blockquote>}
+        </article>
+      ))}
+    </div>
+  </div>
+</Room>
+
+<style>
+  .library { max-width: 52rem; }
+  .shelf { display: flex; align-items: flex-end; gap: 3px; min-height: 17rem; overflow-x: auto; padding: 2.5rem .6rem 0; scrollbar-width: thin; }
+  .spine {
+    flex: none; width: var(--w); height: var(--h); position: relative; cursor: pointer; border: 0; padding: .9rem 0 .6rem;
+    display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: .6rem;
+    color: #f3ece0; border-radius: 3px 3px 1px 1px;
+    background:
+      linear-gradient(90deg, rgba(0,0,0,.28), rgba(255,255,255,.12) 22%, rgba(255,255,255,0) 45%, rgba(0,0,0,.18) 85%, rgba(0,0,0,.32)),
+      linear-gradient(180deg, transparent 8%, rgba(214, 180, 112, .55) 8.4%, transparent 9.2%, transparent 90%, rgba(214, 180, 112, .55) 90.4%, transparent 91.2%),
+      var(--c);
+    box-shadow: 0 .3rem .6rem -.2rem rgba(43, 37, 48, .4);
+    transform-origin: 50% 100%;
+    transition: transform .7s cubic-bezier(.2, .8, .2, 1.1), box-shadow .7s;
+    animation: shelve .9s cubic-bezier(.2, .8, .2, 1) var(--d) both;
+  }
+  .spine.quit { transform: rotate(-5deg); margin-inline: .35rem .1rem; }
+  .spine.reading::after { content: ""; position: absolute; bottom: -1.1rem; left: 50%; width: .4rem; height: 1.5rem; margin-left: -.2rem; background: #b33c3c; clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%); }
+  .spine:hover { transform: translateY(-.5rem); }
+  .spine.quit:hover { transform: rotate(-5deg) translateY(-.5rem); }
+  .spine[aria-selected="true"] { transform: translateY(-1.8rem); box-shadow: 0 1.4rem 1.4rem -.8rem rgba(43, 37, 48, .45); }
+  .spine.quit[aria-selected="true"] { transform: rotate(-2deg) translateY(-1.8rem); }
+  .t, .a { writing-mode: vertical-rl; transform: rotate(180deg); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-height: 72%; }
+  .t { font: italic 400 .95rem/1 var(--display); }
+  .a { font: 500 .52rem/1 var(--ui); letter-spacing: .16em; text-transform: uppercase; opacity: .8; max-height: 22%; }
+  .ledge { height: 10px; border-radius: 2px; background: linear-gradient(180deg, #d9cdb8, #bba98b); box-shadow: 0 10px 18px -8px rgba(43, 37, 48, .45), inset 0 1px 0 rgba(255,255,255,.6); }
+
+  .pages { margin-top: 2.6rem; }
+  .page { display: grid; gap: .6rem; max-width: 38rem; animation: open .8s cubic-bezier(.2, .7, .2, 1) both; }
+  .status { margin: 0; font: 500 .66rem var(--ui); letter-spacing: .22em; text-transform: uppercase; color: var(--gilt); }
+  .page h2 { margin: 0; font: italic 400 2.3rem/1.05 var(--display); }
+  .author { margin: 0; color: var(--haze); }
+  .note { margin: .6rem 0 0; font-size: 1.05rem; }
+  blockquote { margin: .8rem 0 0; padding-left: 1.2rem; border-left: 1px solid var(--gilt-soft); font: italic 400 1.3rem/1.5 var(--display); color: var(--haze); }
+  @keyframes shelve { from { opacity: 0; transform: translateY(-30px); } }
+  @keyframes open { from { opacity: 0; transform: translateY(10px); filter: blur(4px); } }
+</style>
+
+<script>
+  const tabs = [...document.querySelectorAll<HTMLButtonElement>('.spine')];
+  const choose = (tab: HTMLButtonElement) => {
+    tabs.forEach((t) => {
+      const on = t === tab;
+      t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute('aria-controls')!)!.hidden = !on;
+    });
+  };
+  tabs.forEach((t, i) => {
+    t.tabIndex = i === 0 ? 0 : -1;
+    t.addEventListener('click', () => choose(t));
+    t.addEventListener('keydown', (e) => {
+      const k = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+      if (k) { const n = tabs[(i + k + tabs.length) % tabs.length]; choose(n); n.focus(); }
+    });
+  });
+</script>

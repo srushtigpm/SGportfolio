@@ -1,0 +1,17 @@
+{
+  "name": "sgportfolio",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Srushti G's personal website: a deck of Rider-Waite cards you play through.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "astro": "^5.18.2",
+    "three": "^0.170.0"
+  }
+}

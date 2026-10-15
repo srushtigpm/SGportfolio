@@ -1,0 +1,25 @@
+---
+import Base from '../layouts/Base.astro';
+import { url } from '../scripts/url.js';
+---
+<Base title="Lost in the mist">
+  <canvas class="mist" data-mist aria-hidden="true"></canvas>
+  <main class="lost">
+    <p class="eyebrow">Page not found</p>
+    <h1>This card isn’t in the deck.</h1>
+    <p>The page you were looking for has drifted off. The rest of the deck is still waiting.</p>
+    <a href={url('')}>Back to the deck</a>
+  </main>
+</Base>
+
+<style>
+  .lost { min-height: 100vh; min-height: 100dvh; display: grid; place-content: center; justify-items: center; gap: 1rem; text-align: center; padding-left: var(--gutter); padding-right: var(--gutter-r); }
+  h1 { margin: 0; font-style: italic; font-size: clamp(2.2rem, 6vw, 3.8rem); line-height: 1; }
+  p { margin: 0; color: var(--haze); max-width: 30rem; }
+  a { margin-top: 1rem; font: 400 .74rem var(--ui); letter-spacing: .16em; text-transform: uppercase; text-decoration: none; padding: .8rem 1.2rem; border-radius: 99px; background: var(--ink); color: var(--pearl); }
+</style>
+
+<script>
+  import { startMist } from '../scripts/mist.js';
+  startMist(document.querySelector<HTMLCanvasElement>('[data-mist]')!, { calm: 0.3 });
+</script>

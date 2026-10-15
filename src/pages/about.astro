@@ -1,0 +1,38 @@
+---
+import Room from '../layouts/Room.astro';
+// TODO: replace these with the real turning points of your story
+const journey = [
+  { when: 'Then', what: 'Where you started', note: 'The place, the school, the first thing you were curious about.' },
+  { when: 'Then', what: 'The first leap', note: 'A move, a new field, a decision that surprised people.' },
+  { when: 'Recently', what: 'What you do now', note: 'Your current role, in a sentence you would say out loud.' },
+  { when: 'Next', what: 'Where you are heading', note: 'What you are curious about, or looking for.' },
+];
+---
+<Room card="fool" title="Where the journey starts" intro="Hi, I’m Srushti. This is the card for beginnings, so here is mine.">
+  <div class="prose">
+    <p>Write two or three short paragraphs about yourself here: what you do, what you care about, and what people usually find surprising about you. Keep it in your own voice. This text lives in <code>src/pages/about.astro</code>.</p>
+    <p>The Fool is the first card in the deck and the only one with the number zero. It belongs to someone who is about to begin something, which makes it a good place for an introduction.</p>
+  </div>
+
+  <h2 class="jh">The road so far</h2>
+  <ol class="journey">
+    {journey.map((j) => (
+      <li>
+        <span class="when">{j.when}</span>
+        <div><b>{j.what}</b><p>{j.note}</p></div>
+      </li>
+    ))}
+  </ol>
+</Room>
+
+<style>
+  .jh { font-style: italic; font-size: 1.9rem; margin: 3rem 0 1.2rem; }
+  .journey { list-style: none; margin: 0; padding: 0; position: relative; max-width: 40rem; }
+  .journey::before { content: ""; position: absolute; left: 5.8rem; top: .6rem; bottom: .6rem; width: 1px; background: linear-gradient(var(--hair), var(--gilt-soft), var(--hair)); }
+  .journey li { display: grid; grid-template-columns: 5.8rem 1fr; gap: 1.6rem; padding-block: .9rem; position: relative; }
+  .journey li::after { content: ""; position: absolute; left: calc(5.8rem - 4px); top: 1.45rem; width: 8px; height: 8px; transform: rotate(45deg); background: var(--pearl); border: 1px solid var(--gilt); }
+  .when { font: 500 .68rem/2.4 var(--ui); letter-spacing: .2em; text-transform: uppercase; color: var(--gilt); }
+  .journey div { min-width: 0; }
+  .journey b { font: italic 400 1.35rem/1.3 var(--display); }
+  .journey p { margin: .2rem 0 0; color: var(--haze); }
+</style>

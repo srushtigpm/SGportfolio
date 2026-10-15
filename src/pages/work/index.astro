@@ -1,0 +1,40 @@
+---
+import { getCollection } from 'astro:content';
+import Room from '../../layouts/Room.astro';
+import { url } from '../../scripts/url.js';
+const projects = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
+const numerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+---
+<Room card="magician" title="Things I’ve made" intro="Every tool on the table. Each project below is a card of its own; open one for the whole story." wide>
+  <ul class="suit">
+    {projects.map((p, i) => (
+      <li style={`--d:${i * 0.1}s`}>
+        <a class="pcard" href={url(`work/${p.id}`)}>
+          <span class="pnum">{numerals[i] ?? i + 1} of the Magician</span>
+          <h2>{p.data.title}</h2>
+          <p class="sum">{p.data.summary}</p>
+          <span class="meta">{p.data.role} · {p.data.year}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</Room>
+
+<style>
+  .suit { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr)); gap: 1.4rem; perspective: 1200px; }
+  .suit li { animation: deal .9s cubic-bezier(.2, .8, .2, 1.05) var(--d) both; }
+  .pcard {
+    position: relative; display: grid; grid-template-rows: auto 1fr auto; gap: .8rem; min-height: 21rem; height: 100%;
+    padding: 1.5rem 1.4rem; text-decoration: none; border-radius: 10px;
+    background: linear-gradient(170deg, rgba(250, 247, 242, .92), rgba(236, 230, 220, .85));
+    box-shadow: 0 0 0 1px var(--gilt-soft), inset 0 0 0 6px rgba(250, 247, 242, .9), inset 0 0 0 7px var(--hair), 0 1.6rem 2.4rem -1.6rem rgba(43, 37, 48, .45);
+    transition: transform .7s cubic-bezier(.2, .7, .2, 1), box-shadow .7s;
+    transform-style: preserve-3d;
+  }
+  .pcard:hover, .pcard:focus-visible { transform: translateY(-8px) rotateX(4deg) rotateY(-5deg); box-shadow: 0 0 0 1px var(--gilt-soft), inset 0 0 0 6px rgba(250, 247, 242, .9), inset 0 0 0 7px var(--hair), 0 2.4rem 3rem -1.6rem rgba(43, 37, 48, .5); }
+  .pnum { font: italic 400 .9rem var(--display); color: var(--gilt); text-align: center; padding-top: .3rem; }
+  .pcard h2 { margin: 0; align-self: center; text-align: center; font: italic 400 1.75rem/1.15 var(--display); }
+  .sum { margin: 0; color: var(--haze); font-size: .95rem; text-align: center; }
+  .meta { font: 500 .66rem var(--ui); letter-spacing: .2em; text-transform: uppercase; text-align: center; color: var(--ink); padding-top: .8rem; border-top: 1px solid var(--hair); }
+  @keyframes deal { from { opacity: 0; transform: translateY(40px) rotate(-3deg); } }
+</style>

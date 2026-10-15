@@ -1,0 +1,29 @@
+---
+import { getCollection, render } from 'astro:content';
+import Room from '../../layouts/Room.astro';
+import { url } from '../../scripts/url.js';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('work');
+  return projects.map((p) => ({ params: { slug: p.id }, props: { project: p } }));
+}
+const { project } = Astro.props;
+const { Content } = await render(project);
+---
+<Room card="magician" title={project.data.title} intro={project.data.summary} pageTitle={project.data.title} description={project.data.summary}>
+  <dl class="facts">
+    <div><dt>Role</dt><dd>{project.data.role}</dd></div>
+    <div><dt>Year</dt><dd>{project.data.year}</dd></div>
+    {project.data.link && <div><dt>See it</dt><dd><a href={project.data.link}>Visit the project</a></dd></div>}
+  </dl>
+  <article class="prose"><Content /></article>
+  <p class="back"><a href={url('work')}>All work</a></p>
+</Room>
+
+<style>
+  .facts { display: flex; flex-wrap: wrap; gap: 1rem 2.5rem; margin: 0 0 2.5rem; padding-bottom: 1.4rem; border-bottom: 1px solid var(--hair); }
+  .facts dt { font: 500 .66rem var(--ui); letter-spacing: .2em; text-transform: uppercase; color: var(--gilt); }
+  .facts dd { margin: .15rem 0 0; font: italic 400 1.2rem var(--display); }
+  .back { margin-top: 3rem; }
+  .back a { font: 400 .72rem var(--ui); letter-spacing: .18em; text-transform: uppercase; color: var(--haze); }
+</style>

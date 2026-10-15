@@ -1,0 +1,7 @@
+[
+  { "id": "sample-1", "title": "Replace with a song on repeat", "artist": "Artist", "why": "Where you were when it found you, or what it sounds like to you. Edit src/content/songs.json." },
+  { "id": "sample-2", "title": "Your morning song", "artist": "Artist", "why": "The one that starts the day." },
+  { "id": "sample-3", "title": "Your late-night song", "artist": "Artist", "why": "The one that ends it." },
+  { "id": "sample-4", "title": "A guilty pleasure", "artist": "Artist", "why": "No shame on this card." },
+  { "id": "sample-5", "title": "The one you sing badly", "artist": "Artist", "why": "Loudly, in the car." }
+]

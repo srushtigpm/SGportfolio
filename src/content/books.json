@@ -1,0 +1,9 @@
+[
+  { "id": "sample-1", "title": "Replace with a book you love", "author": "Author name", "status": "read", "note": "One or two sentences on why it stayed with you. Edit src/content/books.json to add your own shelf.", "line": "A favourite line from the book goes here." },
+  { "id": "sample-2", "title": "The book on your nightstand", "author": "Author name", "status": "reading", "note": "Books marked \"reading\" get a ribbon on their spine." },
+  { "id": "sample-3", "title": "A book that changed your mind", "author": "Author name", "status": "read", "note": "What did it change?" },
+  { "id": "sample-4", "title": "One you gave up on", "author": "Author name", "status": "quit", "note": "Books marked \"quit\" sit slightly crooked on the shelf. Honesty is charming." },
+  { "id": "sample-5", "title": "A childhood favourite", "author": "Author name", "status": "read", "note": "Where were you when you first read it?" },
+  { "id": "sample-6", "title": "The one you recommend most", "author": "Author name", "status": "read", "note": "Who do you give it to?" },
+  { "id": "sample-7", "title": "Something for work", "author": "Author name", "status": "read", "note": "The idea you still use." }
+]

@@ -1,0 +1,44 @@
+---
+// The plain menu: every room, one tap away, for anyone who'd rather not play.
+import { deck } from '../data/deck.js';
+import { url } from '../scripts/url.js';
+interface Props { current?: string }
+const { current } = Astro.props;
+---
+<details class="index">
+  <summary>Index</summary>
+  <ul>
+    <li><a href={url('')}><span>The deck</span><em>Home</em></a></li>
+    {deck.map((c) => (
+      <li><a href={url(c.path)} aria-current={c.id === current ? 'page' : undefined}><span>{c.inside}</span><em>{c.name}</em></a></li>
+    ))}
+    <li class="credit">Card art by Pamela Colman Smith, 1909</li>
+  </ul>
+</details>
+
+<style>
+  .index { position: relative; }
+  summary {
+    list-style: none; cursor: pointer; padding: .5rem 0; border-bottom: 1px solid var(--hair);
+    font: 400 .7rem/1 var(--ui); letter-spacing: .24em; text-transform: uppercase; color: var(--ink);
+  }
+  summary::-webkit-details-marker { display: none; }
+  ul {
+    position: absolute; right: 0; top: calc(100% + .6rem); z-index: 20; margin: 0; padding: .5rem 0; list-style: none; min-width: 14rem;
+    background: var(--veil); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--hair); border-radius: 4px; box-shadow: 0 1rem 2rem -1.2rem rgba(43, 37, 48, .35);
+  }
+  a { display: flex; justify-content: space-between; gap: 1rem; align-items: baseline; padding: .5rem 1rem; text-decoration: none; font-size: .9rem; }
+  a:hover, a:focus-visible { background: rgba(140, 108, 53, .1); outline: none; }
+  a[aria-current] span { text-decoration: underline; text-decoration-color: var(--gilt-soft); text-underline-offset: .25em; }
+  em { font: italic 400 .8rem var(--display); color: var(--haze); white-space: nowrap; }
+  .credit { padding: .6rem 1rem .3rem; margin-top: .3rem; border-top: 1px solid var(--hair); font: italic 400 .75rem var(--display); color: var(--haze); }
+</style>
+
+<script>
+  // close the menu when tapping elsewhere or pressing Escape
+  document.querySelectorAll<HTMLDetailsElement>('details.index').forEach((d) => {
+    document.addEventListener('pointerdown', (e) => { if (d.open && !d.contains(e.target as Node)) d.open = false; });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') d.open = false; });
+  });
+</script>

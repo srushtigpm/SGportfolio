@@ -1,0 +1,61 @@
+/* Pearl dawn: one deliberate light look across the whole site. */
+:root {
+  color-scheme: light;
+  --pearl: #ebe7e1;     /* mist ground, matches the 3D fog */
+  --ink: #2b2530;       /* plum-black text */
+  --haze: #6a6370;      /* quiet text */
+  --gilt: #8c6c35;      /* old gold, readable on pearl */
+  --gilt-soft: #c6a467; /* gold leaf for edges and ornaments */
+  --veil: rgba(246, 243, 238, .74);
+  --hair: rgba(140, 108, 53, .3);
+  --display: "Bodoni Moda", "Didot", "Bodoni 72", Georgia, serif;
+  --ui: "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --gutter: max(18px, env(safe-area-inset-left, 0px));
+  --gutter-r: max(18px, env(safe-area-inset-right, 0px));
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--pearl); color: var(--ink);
+  font: 300 16px/1.7 var(--ui); -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--gilt); outline-offset: 3px; }
+[hidden] { display: none !important; }
+h1, h2, h3 { font-family: var(--display); font-weight: 400; text-wrap: balance; }
+.eyebrow { font: 500 .7rem/1.3 var(--ui); letter-spacing: .24em; text-transform: uppercase; color: var(--gilt); margin: 0; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.mist { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -1; display: block; }
+
+/* Soft cross-page transitions: the page dissolves like mist rather than cutting */
+@view-transition { navigation: auto; }
+::view-transition-old(root) { animation: mist-out .45s ease both; }
+::view-transition-new(root) { animation: mist-in .7s ease both; }
+@keyframes mist-out { to { opacity: 0; filter: blur(8px); } }
+@keyframes mist-in { from { opacity: 0; filter: blur(10px); } }
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
+/* Long-form text in rooms and posts */
+.prose { font-size: 1.06rem; line-height: 1.8; max-width: 40rem; }
+.prose > * + * { margin-top: 1.1em; }
+.prose > :first-child { margin-top: 0; }
+.prose h2 { font-style: italic; font-size: 1.9rem; line-height: 1.15; margin-top: 2.2em; margin-bottom: -.2em; }
+.prose h3 { font-size: 1.35rem; margin-top: 1.8em; }
+.prose p, .prose ul, .prose ol { margin-bottom: 0; }
+.prose a { text-decoration-color: var(--gilt-soft); text-underline-offset: .22em; text-decoration-thickness: 1px; }
+.prose a:hover { color: var(--gilt); }
+.prose blockquote { margin-inline: 0; padding-left: 1.3rem; border-left: 1px solid var(--gilt-soft); font: italic 400 1.3rem/1.5 var(--display); color: var(--haze); }
+.prose code { font-size: .88em; background: rgba(140, 108, 53, .1); padding: .1em .35em; border-radius: 3px; }
+.prose pre { overflow-x: auto; padding: 1rem 1.2rem; background: rgba(43, 37, 48, .06); border-radius: 6px; }
+.prose pre code { background: none; padding: 0; }
+.prose img { border-radius: 4px; }
+.prose hr { border: 0; border-top: 1px solid var(--hair); margin-block: 2.5em; }
+.prose li + li { margin-top: .35em; }
+.prose li::marker { color: var(--gilt); }
+
+.placeholder-note { font: italic 400 .95rem var(--display); color: var(--haze); border-top: 1px solid var(--hair); padding-top: 1rem; margin-top: 2.5rem; max-width: 40rem; }
