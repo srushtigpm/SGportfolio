@@ -1,0 +1,81 @@
+---
+import Room from '../layouts/Room.astro';
+import { getCollection } from 'astro:content';
+import { getPosts } from '../scripts/posts.js';
+import { deck } from '../data/deck.js';
+import { url } from '../scripts/url.js';
+
+// Every place the wheel can land
+const posts = await getPosts();
+const work = await getCollection('work');
+const places = [
+  ...posts.map((p) => ({ label: p.data.title, kind: 'A note', href: url(`blog/${p.id}`) })),
+  ...work.map((p) => ({ label: p.data.title, kind: 'A project', href: url(`work/${p.id}`) })),
+  ...deck.filter((c) => c.id !== 'wheel').map((c) => ({ label: c.inside, kind: c.name, href: url(c.path) })),
+];
+---
+<Room card="wheel" title="Spin the wheel" intro="It never stops turning. Give it a push and it will carry you somewhere on this site.">
+  <div class="spin">
+    <button type="button" class="wheel" id="wheel" aria-label="Spin the wheel">
+      <svg viewBox="0 0 200 200" aria-hidden="true">
+        <circle cx="100" cy="100" r="96" fill="#d9a35f" stroke="#8c6c35" stroke-width="2" />
+        <circle cx="100" cy="100" r="78" fill="none" stroke="#8c6c35" stroke-width="1.2" />
+        <circle cx="100" cy="100" r="30" fill="none" stroke="#8c6c35" stroke-width="1.2" />
+        {Array.from({ length: 8 }, (_, i) => {
+          const a = (i / 8) * Math.PI * 2;
+          return <line x1={100 + Math.cos(a) * 30} y1={100 + Math.sin(a) * 30} x2={100 + Math.cos(a) * 78} y2={100 + Math.sin(a) * 78} stroke="#8c6c35" stroke-width="1.4" />;
+        })}
+        {['T', 'A', 'R', 'O'].map((l, i) => {
+          const a = (i / 4) * Math.PI * 2 - Math.PI / 2;
+          return <text x={100 + Math.cos(a) * 87} y={100 + Math.sin(a) * 87 + 4.5} text-anchor="middle" font-family="Bodoni Moda, Georgia, serif" font-size="13" fill="#2b2530">{l}</text>;
+        })}
+        <circle cx="100" cy="100" r="5" fill="#8c6c35" />
+      </svg>
+    </button>
+    <p class="landing" id="landing" aria-live="polite">Tap the wheel.</p>
+  </div>
+
+  <details class="all">
+    <summary>Or choose for yourself</summary>
+    <ul>{places.map((p) => <li><a href={p.href}>{p.label}</a> <em>{p.kind}</em></li>)}</ul>
+  </details>
+
+  <script is:inline type="application/json" id="places" set:html={JSON.stringify(places)}></script>
+</Room>
+
+<style>
+  .spin { display: grid; justify-items: start; gap: 1.4rem; }
+  .wheel { width: min(17rem, 70vw); aspect-ratio: 1; border: 0; padding: 0; background: none; cursor: pointer; border-radius: 50%; filter: drop-shadow(0 1.4rem 1.6rem rgba(43, 37, 48, .3)); }
+  .wheel svg { width: 100%; height: 100%; display: block; transition: transform 3.2s cubic-bezier(.12, .7, .15, 1); }
+  .landing { margin: 0; font: italic 400 1.5rem/1.3 var(--display); min-height: 2.6em; }
+  .landing a { color: var(--ink); text-decoration-color: var(--gilt-soft); }
+  .all { margin-top: 2.5rem; max-width: 40rem; }
+  .all summary { cursor: pointer; font: 400 .72rem var(--ui); letter-spacing: .18em; text-transform: uppercase; color: var(--haze); }
+  .all ul { list-style: none; margin: 1rem 0 0; padding: 0; display: grid; gap: .5rem; }
+  .all em { font: italic 400 .9rem var(--display); color: var(--haze); }
+</style>
+
+<script>
+  import { play } from '../scripts/sound.js';
+  const places: { label: string; kind: string; href: string }[] = JSON.parse(document.getElementById('places')!.textContent!);
+  const wheel = document.getElementById('wheel')!, svg = wheel.querySelector('svg')!, landing = document.getElementById('landing')!;
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let turns = 0, spinning = false;
+  wheel.addEventListener('click', () => {
+    if (spinning) return;
+    spinning = true;
+    const pick = places[Math.floor(Math.random() * places.length)];
+    turns += 1440 + Math.random() * 720;
+    svg.style.transform = `rotate(${turns}deg)`;
+    landing.textContent = 'Turning…';
+    // the pawl clicks past the spokes, slowing as the wheel does
+    if (!still) { let t = 0, gap = 40; const tick = () => { play('tick'); t += gap; gap *= 1.09; if (t < 3000) setTimeout(tick, gap); }; tick(); }
+    setTimeout(() => {
+      landing.innerHTML = '';
+      const a = document.createElement('a'); a.href = pick.href; a.textContent = pick.label;
+      landing.append(`${pick.kind}: `, a);
+      spinning = false;
+      setTimeout(() => { if (landing.contains(a)) location.href = pick.href; }, 1400);
+    }, still ? 50 : 3200);
+  });
+</script>

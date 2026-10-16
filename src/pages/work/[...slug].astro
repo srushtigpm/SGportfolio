@@ -1,0 +1,95 @@
+---
+import { getCollection, render } from 'astro:content';
+import Room from '../../layouts/Room.astro';
+import HeldCard from '../../components/HeldCard.astro';
+import SuitCard from '../../components/SuitCard.astro';
+import { url } from '../../scripts/url.js';
+
+export async function getStaticPaths() {
+  const projects = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
+  return projects.map((p, i) => ({ params: { slug: p.id }, props: { project: p, index: i } }));
+}
+const { project, index } = Astro.props;
+const { Content } = await render(project);
+const numerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+const numeral = numerals[index] ?? String(index + 1);
+const cardName = project.data.card?.name ?? project.data.title;
+---
+<Room card="magician" title={project.data.title} intro={project.data.summary} pageTitle={project.data.title} description={project.data.summary}>
+  <Fragment slot="card">
+    <HeldCard name={cardName}>
+      <SuitCard name={cardName} numeral={numeral} emblem={project.data.card?.emblem} sky={project.data.card?.sky} title={project.data.title} />
+    </HeldCard>
+    <p class="card-caption"><span>{numeral}</span> {cardName}</p>
+  </Fragment>
+
+  <dl class="facts">
+    <div><dt>Role</dt><dd>{project.data.role}</dd></div>
+    <div><dt>Year</dt><dd>{project.data.year}</dd></div>
+    {project.data.link && <div><dt>See it</dt><dd><a href={project.data.link}>Visit the project</a></dd></div>}
+  </dl>
+
+  {project.data.timeline.length > 0 && (
+    <section class="played" aria-labelledby="played-h">
+      <h2 id="played-h">How it played out</h2>
+      <ol class="spread" data-spread>
+        {project.data.timeline.map((beat, i) => (
+          <li style={`--i:${i}; --r:${(i % 2 ? 1.5 : -1.5)}deg`}>
+            <span class="beat-no">{numerals[i] ?? i + 1}</span>
+            <span class="when">{beat.when}</span>
+            <b>{beat.title}</b>
+            {beat.detail && <p>{beat.detail}</p>}
+          </li>
+        ))}
+      </ol>
+    </section>
+  )}
+
+  <article class="prose"><Content /></article>
+  <p class="back"><a href={url('work')}>All work</a></p>
+</Room>
+
+<style>
+  .card-caption { margin: 0; text-align: center; font: italic 400 1rem var(--display); color: var(--haze); }
+  .card-caption span { color: var(--gilt); margin-right: .4rem; }
+  .facts { display: flex; flex-wrap: wrap; gap: 1rem 2.5rem; margin: 0 0 2.5rem; padding-bottom: 1.4rem; border-bottom: 1px solid var(--hair); }
+  .facts dt { font: 500 .66rem var(--ui); letter-spacing: .2em; text-transform: uppercase; color: var(--gilt); }
+  .facts dd { margin: .15rem 0 0; font: italic 400 1.2rem var(--display); }
+
+  .played { margin-bottom: 3rem; }
+  .played h2 { margin: 0 0 1.2rem; font: italic 400 1.9rem/1.1 var(--display); }
+  .spread {
+    list-style: none; margin: 0; padding: 1.2rem .4rem 1.6rem; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(10.5rem, 1fr);
+    gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; position: relative; scrollbar-width: thin;
+  }
+  .spread li {
+    scroll-snap-align: start; position: relative; display: grid; align-content: start; gap: .35rem; min-height: 13rem;
+    padding: 1.1rem 1rem 1.2rem; border-radius: 8px; background: var(--paper); color: #2b2530;
+    box-shadow: 0 0 0 1px var(--gilt-soft), inset 0 0 0 5px var(--paper), inset 0 0 0 6px rgba(140, 108, 53, .35), 0 1rem 1.4rem -1rem rgba(30, 24, 36, .5);
+    transform: rotate(var(--r)); transition: transform .9s cubic-bezier(.2, .8, .2, 1.1), opacity .7s;
+    transition-delay: calc(var(--i) * 110ms);
+  }
+  .spread li:hover { transform: rotate(0deg) translateY(-6px); transition-delay: 0s; }
+  /* with JS, beats are dealt onto the table as the spread scrolls into view */
+  :global(html.js) .spread:not(.dealt) li { opacity: 0; transform: translateY(40px) rotate(calc(var(--r) * 4)); }
+  .beat-no { font: italic 400 1.4rem/1 var(--display); color: #8c6c35; }
+  .when { font: 500 .62rem var(--ui); letter-spacing: .2em; text-transform: uppercase; color: #8c6c35; }
+  .spread b { font: italic 400 1.15rem/1.25 var(--display); }
+  .spread p { margin: 0; font-size: .88rem; color: #5b5560; }
+
+  .back { margin-top: 3rem; }
+  .back a { font: 400 .72rem var(--ui); letter-spacing: .18em; text-transform: uppercase; color: var(--haze); }
+</style>
+
+<script>
+  import { play } from '../../scripts/sound.js';
+  document.querySelectorAll<HTMLElement>('[data-spread]').forEach((el) => {
+    const io = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) {
+        el.classList.add('dealt'); io.disconnect();
+        el.querySelectorAll('li').forEach((_, i) => setTimeout(() => play('flick'), i * 110));
+      }
+    }, { threshold: .25 });
+    io.observe(el);
+  });
+</script>

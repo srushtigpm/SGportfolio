@@ -1,0 +1,27 @@
+---
+import { render } from 'astro:content';
+import Room from '../../layouts/Room.astro';
+import { getPosts, readingTime, formatDate } from '../../scripts/posts.js';
+import { url } from '../../scripts/url.js';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((p) => ({ params: { slug: p.id }, props: { post: p } }));
+}
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+<Room card="hermit" title={post.data.title} intro={post.data.summary} pageTitle={post.data.title} description={post.data.summary}>
+  <p class="meta">
+    <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time> · {readingTime(post.body)} min read
+    {post.data.tags.length > 0 && <> · {post.data.tags.join(', ')}</>}
+  </p>
+  <article class="prose"><Content /></article>
+  <p class="back"><a href={url('blog')}>All notes</a></p>
+</Room>
+
+<style>
+  .meta { margin: 0 0 2.4rem; padding-bottom: 1.3rem; border-bottom: 1px solid var(--hair); font: 500 .66rem var(--ui); letter-spacing: .2em; text-transform: uppercase; color: var(--gilt); }
+  .back { margin-top: 3rem; }
+  .back a { font: 400 .72rem var(--ui); letter-spacing: .18em; text-transform: uppercase; color: var(--haze); }
+</style>

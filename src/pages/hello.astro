@@ -1,0 +1,44 @@
+---
+import Room from '../layouts/Room.astro';
+import { site } from '../data/site.js';
+---
+<Room card="world" title="Say hello" intro="The dance at the end of the deck. If you’ve come this far, I’d love to hear from you.">
+  <div class="hello">
+    <div class="mail">
+      <span class="eyebrow">Write to me</span>
+      <p class="addr" id="addr">{site.email}</p>
+      <div class="row">
+        <a class="btn" href={`mailto:${site.email}`}>Open email</a>
+        <button class="btn ghost" type="button" id="copy">Copy address</button>
+        <span class="done" id="done" aria-live="polite"></span>
+      </div>
+    </div>
+    <ul class="links">
+      {site.links.map((l) => <li><a href={l.href} target="_blank" rel="noopener">{l.label}</a></li>)}
+    </ul>
+  </div>
+</Room>
+
+<style>
+  .hello { display: grid; gap: 2.6rem; max-width: 40rem; }
+  .mail { display: grid; gap: .7rem; }
+  .addr { margin: 0; font: italic 400 clamp(1.6rem, 4vw, 2.4rem)/1.2 var(--display); overflow-wrap: anywhere; user-select: all; }
+  .row { display: flex; flex-wrap: wrap; gap: .7rem; align-items: center; }
+  .btn { font: 400 .74rem/1 var(--ui); letter-spacing: .16em; text-transform: uppercase; text-decoration: none; padding: .8rem 1.2rem; border-radius: 99px; background: var(--ink); color: var(--pearl); border: 1px solid var(--ink); cursor: pointer; transition: background .4s, color .4s; }
+  .btn:hover { background: var(--gilt); border-color: var(--gilt); }
+  .btn.ghost { background: none; color: var(--ink); border-color: var(--hair); }
+  .btn.ghost:hover { background: var(--ink); color: var(--pearl); }
+  .done { font: italic 400 1rem var(--display); color: var(--gilt); }
+  .links { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: .5rem 2rem; border-top: 1px solid var(--hair); padding-top: 1.4rem; }
+  .links a { font: italic 400 1.35rem var(--display); text-decoration: none; border-bottom: 1px solid var(--hair); }
+  .links a:hover { color: var(--gilt); }
+</style>
+
+<script>
+  const btn = document.getElementById('copy')!, done = document.getElementById('done')!, addr = document.getElementById('addr')!;
+  btn.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(addr.textContent!.trim()); done.textContent = 'Copied'; }
+    catch { getSelection()?.selectAllChildren(addr); done.textContent = 'Selected. Press copy.'; }
+    setTimeout(() => { done.textContent = ''; }, 2500);
+  });
+</script>

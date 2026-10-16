@@ -1,0 +1,140 @@
+---
+import Base from '../layouts/Base.astro';
+import Index from '../components/Index.astro';
+import SoundToggle from '../components/SoundToggle.astro';
+import { deck } from '../data/deck.js';
+import { site } from '../data/site.js';
+import { url } from '../scripts/url.js';
+---
+<Base>
+  <link slot="head" rel="preload" as="image" href={url('cards/00-TheFool.webp')} />
+  <canvas id="scene" aria-hidden="true"></canvas>
+
+  <div class="fallback" id="fallback" hidden>
+    <p>This deck needs WebGL to float. Every room is still one tap away:</p>
+    <ul>{deck.map((c) => <li><a href={url(c.path)}>{c.inside}</a> <em>{c.name}</em></li>)}</ul>
+  </div>
+
+  <div class="frame">
+    <header class="top">
+      <h1 class="mark"><b>{site.name}</b><span>{site.tagline}</span><span class="sky-label" id="skyLabel"></span></h1>
+      <div class="tools"><SoundToggle /><Index /></div>
+    </header>
+    <footer class="bottom">
+      <div class="tally"><div class="pips" id="pips">{deck.map(() => <i></i>)}</div><span id="tally">0 of {deck.length} turned</span></div>
+      <p class="hint" id="hint">Drag to let the deck drift. Tap a card to turn it over.</p>
+    </footer>
+  </div>
+
+  <aside class="reading" id="reading" aria-live="polite">
+    <div class="num" id="rNum"></div>
+    <h2 id="rName"></h2>
+    <p class="story" id="rStory"></p>
+    <div class="inside" id="rInsideRow"><span>Inside</span><b id="rInside"></b></div>
+    <div class="actions">
+      <a class="enter" id="rEnter" href={url('')}><span id="rEnterLabel">Enter</span><i aria-hidden="true"></i></a>
+      <button type="button" class="back" id="rBack">Return it to the deck</button>
+    </div>
+  </aside>
+
+  <noscript><div class="fallback"><ul>{deck.map((c) => <li><a href={url(c.path)}>{c.inside}</a> <em>{c.name}</em></li>)}</ul></div></noscript>
+</Base>
+
+<style>
+  :global(html), :global(body) { height: 100%; }
+  :global(body) { overflow: hidden; overscroll-behavior: none; }
+  #scene { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; outline: none; }
+  #scene:global(.dragging) { cursor: grabbing; }
+  #scene:global(.pointing) { cursor: pointer; }
+
+  .frame {
+    position: fixed; inset: 0; pointer-events: none; display: flex; flex-direction: column; justify-content: space-between;
+    padding-top: calc(env(safe-area-inset-top, 0px) + 22px);
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 22px);
+    padding-left: max(18px, calc(env(safe-area-inset-left, 0px) + 28px));
+    padding-right: max(18px, calc(env(safe-area-inset-right, 0px) + 28px));
+  }
+  .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+  .tools { display: flex; align-items: center; gap: 1rem; pointer-events: auto; }
+  .sky-label { font: italic 400 .85rem/1.4 var(--display) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--gilt) !important; margin-top: .25rem; }
+  .mark { margin: 0; display: grid; gap: .1rem; }
+  .mark b { font: italic 500 1.55rem/1 var(--display); letter-spacing: -.01em; }
+  .mark span { font: 400 .68rem/1.4 var(--ui); letter-spacing: .24em; text-transform: uppercase; color: var(--haze); }
+
+  .bottom { display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; flex-wrap: wrap; transition: opacity .5s; }
+  .tally { display: flex; align-items: center; gap: .7rem; font: 400 .72rem var(--ui); letter-spacing: .16em; text-transform: uppercase; color: var(--haze); font-variant-numeric: tabular-nums; }
+  .pips { display: flex; gap: 5px; }
+  .pips i { width: 6px; height: 6px; transform: rotate(45deg); border: 1px solid var(--gilt); transition: background .6s, box-shadow .6s; }
+  .pips :global(i.on) { background: var(--gilt); box-shadow: 0 0 8px rgba(140, 108, 53, .6); }
+  .hint { margin: 0; font: italic 400 1rem var(--display); color: var(--haze); text-align: right; }
+
+  .reading {
+    position: fixed; z-index: 5;
+    left: max(18px, calc(env(safe-area-inset-left, 0px) + 6vw)); top: 50%;
+    width: min(24rem, 38vw); transform: translateY(-46%);
+    opacity: 0; visibility: hidden; transition: opacity .6s ease, transform .9s cubic-bezier(.2, .7, .2, 1), visibility 0s .6s;
+    display: grid; gap: 1rem;
+  }
+  /* a soft pool of light behind the words so drifting cards never fight the text */
+  .reading::before {
+    content: ""; position: absolute; inset: -5rem -6rem; z-index: -1; pointer-events: none;
+    background: radial-gradient(closest-side, var(--pool), color-mix(in srgb, var(--pool) 75%, transparent) 55%, transparent);
+  }
+  .reading:global(.open) { opacity: 1; visibility: visible; transform: translateY(-50%); transition: opacity .9s ease .35s, transform 1.1s cubic-bezier(.2, .7, .2, 1) .3s, visibility 0s; }
+  .num { font: italic 400 1rem var(--display); color: var(--gilt); letter-spacing: .08em; }
+  .reading h2 { margin: 0; font: italic 400 clamp(2.4rem, 4.4vw, 3.6rem)/.95 var(--display); letter-spacing: -.02em; }
+  .story { margin: 0; font-size: 1.02rem; max-width: 34ch; }
+  .inside { display: flex; gap: .8rem; align-items: baseline; padding-top: .9rem; border-top: 1px solid var(--hair); }
+  .inside span { font: 500 .66rem var(--ui); letter-spacing: .24em; text-transform: uppercase; color: var(--gilt); }
+  .inside b { font: italic 400 1.25rem var(--display); }
+  .actions { display: flex; flex-wrap: wrap; gap: .6rem 1.4rem; align-items: center; padding-top: .3rem; }
+  .enter {
+    display: inline-flex; align-items: center; gap: .7rem; text-decoration: none; color: var(--pearl); background: var(--ink);
+    padding: .75rem 1.15rem; border-radius: 99px; font: 400 .78rem/1 var(--ui); letter-spacing: .14em; text-transform: uppercase;
+    transition: background .4s, gap .4s;
+  }
+  .enter i { width: 1.1rem; height: 1px; background: currentColor; position: relative; }
+  .enter i::after { content: ""; position: absolute; right: 0; top: -3px; width: 7px; height: 7px; border-top: 1px solid; border-right: 1px solid; transform: rotate(45deg); }
+  .enter:hover { background: var(--gilt); gap: 1rem; }
+  .reading:global([data-locked]) .enter { background: none; color: var(--ink); padding-inline: 0; border-bottom: 1px solid var(--hair); border-radius: 0; }
+  .back {
+    background: none; border: 0; padding: .3rem 0; cursor: pointer; color: var(--haze);
+    font: 400 .72rem var(--ui); letter-spacing: .18em; text-transform: uppercase;
+  }
+  .back:hover { color: var(--ink); }
+  .reading:global([data-locked]) .back { display: none; }
+
+  .fallback { position: fixed; inset: 0; display: grid; place-content: center; gap: 1rem; text-align: center; padding-inline: 24px; font: italic 400 1.15rem var(--display); color: var(--haze); background: var(--pearl); z-index: 3; }
+  .fallback ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .4rem; font-style: normal; }
+  .fallback a { color: var(--ink); }
+
+  @media (max-width: 760px), (max-aspect-ratio: 1/1) {
+    .reading {
+      left: max(14px, env(safe-area-inset-left, 0px)); right: max(14px, env(safe-area-inset-right, 0px));
+      top: auto; bottom: calc(env(safe-area-inset-bottom, 0px) + 14px); width: auto;
+      transform: translateY(12px); gap: .55rem;
+      padding: 1.1rem 1.2rem 1rem; background: var(--veil); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--hair); border-radius: 8px;
+    }
+    .reading:global(.open) { transform: translateY(0); }
+    .reading h2 { font-size: 2.1rem; }
+    .story { font-size: .93rem; }
+    .inside { display: none; }
+    .hint { font-size: .9rem; }
+    :global(body.reading-open) .bottom { opacity: 0; }
+  }
+</style>
+
+<script>
+  import { startDeck } from '../scripts/deck.js';
+  const $ = (id: string) => document.getElementById(id)!;
+  startDeck({
+    canvas: $('scene') as HTMLCanvasElement,
+    ui: {
+      fallback: $('fallback'), reading: $('reading'), hint: $('hint'), tally: $('tally'), pips: $('pips'),
+      num: $('rNum'), name: $('rName'), story: $('rStory'), inside: $('rInside'), insideRow: $('rInsideRow'),
+      enter: $('rEnter'), enterLabel: $('rEnterLabel'), back: $('rBack'),
+      skyLabel: $('skyLabel'),
+    },
+  });
+</script>

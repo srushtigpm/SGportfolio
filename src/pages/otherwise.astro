@@ -1,0 +1,29 @@
+---
+import Room from '../layouts/Room.astro';
+// TODO: your life outside work. Add, remove or rename freely.
+const patches = [
+  { title: 'Things I make', body: 'Cooking, drawing, knitting, code for fun? Whatever your hands do when nobody is paying you.' },
+  { title: 'Places', body: 'Cities you have lived in, a trip that changed you, the café you always go back to.' },
+  { title: 'Small obsessions', body: 'The niche thing you could talk about for an hour.' },
+  { title: 'Currently', body: 'Learning, training for, or building something? Put it here and update it now and then.' },
+];
+---
+<Room card="empress" title="The garden" intro="Everything that grows when work leaves it room.">
+  <div class="garden">
+    {patches.map((p, i) => (
+      <section class="patch" style={`--d:${i * 0.12}s`}>
+        <h2>{p.title}</h2>
+        <p>{p.body}</p>
+      </section>
+    ))}
+  </div>
+  <p class="placeholder-note">Edit these in src/pages/otherwise.astro.</p>
+</Room>
+
+<style>
+  .garden { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1px; background: var(--hair); border: 1px solid var(--hair); border-radius: 6px; overflow: hidden; max-width: 46rem; }
+  .patch { background: rgba(246, 243, 238, .6); padding: 1.6rem 1.5rem 1.8rem; display: grid; gap: .5rem; align-content: start; animation: grow .9s cubic-bezier(.2, .7, .2, 1) var(--d) both; }
+  .patch h2 { margin: 0; font: italic 400 1.5rem/1.2 var(--display); }
+  .patch p { margin: 0; color: var(--haze); }
+  @keyframes grow { from { opacity: 0; transform: translateY(14px); } }
+</style>
