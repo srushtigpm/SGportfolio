@@ -1,5 +1,6 @@
 // Plain-WebGL mist for the rooms: no three.js needed, so section pages stay light.
 import { mistVertex, mistFragment } from './mistShader.js';
+import { skyAt, applySkyToDocument } from './sky.js';
 
 export function startMist(canvas, { calm = 0 } = {}) {
   const gl = canvas.getContext('webgl', { antialias: false, premultipliedAlpha: false });
@@ -15,6 +16,12 @@ export function startMist(canvas, { calm = 0 } = {}) {
   const u = (n) => gl.getUniformLocation(prog, n);
   const uTime = u('uTime'), uMouse = u('uMouse'), uRes = u('uRes');
   gl.uniform1f(u('uDim'), 0); gl.uniform1f(u('uCalm'), calm);
+  const setSky = () => {
+    const s = skyAt(); applySkyToDocument(s);
+    gl.uniform3fv(u('uBase'), s.base); gl.uniform3fv(u('uLilac'), s.lilac); gl.uniform3fv(u('uSky'), s.sky);
+    gl.uniform3fv(u('uWarm'), s.warm); gl.uniform3fv(u('uGlow'), s.glow); gl.uniform1f(u('uStars'), s.stars);
+  };
+  setSky(); setInterval(setSky, 60000);
 
   const scale = Math.min(devicePixelRatio || 1, 1.5) * .6; // the mist is soft, so render it below full resolution
   const resize = () => { canvas.width = Math.round(canvas.clientWidth * scale); canvas.height = Math.round(canvas.clientHeight * scale); gl.viewport(0, 0, canvas.width, canvas.height); gl.uniform2f(uRes, canvas.width, canvas.height); };

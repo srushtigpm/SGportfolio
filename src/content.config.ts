@@ -23,6 +23,14 @@ const work = defineCollection({
     summary: z.string(),
     order: z.number().default(0),
     link: z.string().url().optional(),
+    // the project's own card face, drawn in the Rider-Waite style
+    card: z.object({
+      name: z.string(),                                   // e.g. "The Builder"
+      emblem: z.enum(['sun', 'tower', 'bridge', 'key', 'sprout', 'lantern']).default('sun'),
+      sky: z.enum(['yellow', 'blue', 'grey', 'dawn']).default('yellow'),
+    }).optional(),
+    // "how it played out": the beats of the story, in order
+    timeline: z.array(z.object({ when: z.string(), title: z.string(), detail: z.string().optional() })).default([]),
   }),
 });
 
@@ -34,6 +42,7 @@ const books = defineCollection({
     author: z.string(),
     note: z.string(),
     line: z.string().optional(),
+    thoughts: z.string().optional(),
     status: z.enum(['read', 'reading', 'quit']).default('read'),
   }),
 });

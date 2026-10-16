@@ -17,6 +17,16 @@ The home page is a 3D ring of eight cards floating in morning mist. Drag to spin
 
 Turned cards are remembered in the visitor's browser. The Index menu in the corner links straight to every room for anyone who'd rather not play.
 
+### Living details
+
+- **Toss a card.** Swipe fast across a card and it spins and tumbles through the air, then springs back to its place.
+- **Holographic foil.** The gold linework on the card backs shifts through the spectrum as cards turn.
+- **The sky follows the clock.** The mist is pale gold at dawn, pearl by day, rose at dusk and deep blue with stars at night, on the visitor's local time. Text switches to moonlight at night. Preview any time of day by adding `?sky=dawn`, `?sky=day`, `?sky=dusk` or `?sky=night` to a URL.
+- **Sound** (off by default, the moon icon in the corner): a paper flick when a card turns, a chime when one is collected, a whoosh for a tossed card, page turns, the wheel's ticking, and wind in the mist. Everything is synthesised in the browser, so there are no audio files.
+- **A star for a cursor**, trailing sparks, on devices with a mouse.
+- **Books you can open.** Pull a book off the shelf and it flies to the table and opens. Drag pages by their edge to turn them, or use the buttons or arrow keys.
+- **Work as its own suit.** Each project gets a card face drawn in the Rider-Waite style and a "how it played out" spread of story beats.
+
 ## Editing your content
 
 | What | Where |
@@ -24,8 +34,8 @@ Turned cards are remembered in the visitor's browser. The Index menu in the corn
 | Name, email, social links | `src/data/site.js` |
 | Card names and descriptions | `src/data/deck.js` |
 | About me and timeline | `src/pages/about.astro` |
-| Projects (one file each) | `src/content/work/*.md` |
-| Books | `src/content/books.json` (`status`: `read`, `reading` or `quit`) |
+| Projects (one file each) | `src/content/work/*.md` (`card` sets its card face: `name`, `emblem` = sun, tower, bridge, key, sprout or lantern, `sky` = yellow, blue, grey or dawn; `timeline` lists the story beats) |
+| Books | `src/content/books.json` (`status`: `read`, `reading` or `quit`; `line` is a favourite quote; `thoughts` adds a second spread) |
 | Songs | `src/content/songs.json` (add `link` for a direct Spotify link) |
 | Blog posts (one file each) | `src/content/blog/*.md` |
 | Life outside work | `src/pages/otherwise.astro` |
@@ -48,4 +58,4 @@ npm run build     # static site in dist/
 
 - [Astro](https://astro.build) for the static site and Markdown content
 - [three.js](https://threejs.org) for the 3D deck; the room pages use a small plain-WebGL mist and no three.js
-- Card art by Pamela Colman Smith from the 1909 Rider-Waite deck (public domain in the US)
+- Card art by Pamela Colman Smith from the 1909 Rider-Waite deck (public domain in the US), from the scans published by [Steve-P.org](https://steve-p.org/cards/RWSa.html) via [mixvlad/TarotCards](https://github.com/mixvlad/TarotCards)

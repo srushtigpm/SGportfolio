@@ -5,6 +5,8 @@ import { deck } from '../data/deck.js';
 import { url } from './url.js';
 import { getTurned, markTurned } from './progress.js';
 import { mistFragment } from './mistShader.js';
+import { skyAt, applySkyToDocument, phaseLabel } from './sky.js';
+import { play } from './sound.js';
 
 export function startDeck({ canvas, ui }) {
   const N = deck.length;
@@ -28,7 +30,9 @@ export function startDeck({ canvas, ui }) {
   const bgScene = new THREE.Scene();
   const bgCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
   const bgU = {
-    uTime: { value: 0 }, uDim: { value: 0 }, uCalm: { value: 0 },
+    uTime: { value: 0 }, uDim: { value: 0 }, uCalm: { value: 0 }, uStars: { value: 0 },
+    uBase: { value: new THREE.Vector3() }, uLilac: { value: new THREE.Vector3() }, uSky: { value: new THREE.Vector3() },
+    uWarm: { value: new THREE.Vector3() }, uGlow: { value: new THREE.Vector3() },
     uMouse: { value: new THREE.Vector2(.5, .5) }, uRes: { value: new THREE.Vector2(1, 1) },
   };
   bgScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.ShaderMaterial({
@@ -56,10 +60,27 @@ export function startDeck({ canvas, ui }) {
   }
   scene.add(new THREE.HemisphereLight(0xfff8ee, 0xbdb6cc, .9));
   const sun = new THREE.DirectionalLight(0xfff4e6, 1.3); sun.position.set(3, 5, 6); scene.add(sun);
+  const hemi = scene.children.find((o) => o.isHemisphereLight);
   const lamp = new THREE.PointLight(0xffe2b8, 9, 9, 1.6); scene.add(lamp);
 
+  // ---------- Time of day: mist colours, fog, and light all follow the visitor's clock ----------
+  const fogBase = new THREE.Color();
+  function applySky() {
+    const s = skyAt(); applySkyToDocument(s);
+    bgU.uBase.value.fromArray(s.base); bgU.uLilac.value.fromArray(s.lilac); bgU.uSky.value.fromArray(s.sky);
+    bgU.uWarm.value.fromArray(s.warm); bgU.uGlow.value.fromArray(s.glow); bgU.uStars.value = s.stars;
+    // fog sits a touch below the mist's average colour (setRGB with sRGB values, three converts to linear)
+    fogBase.setRGB(s.base[0] * .97 + s.lilac[0] * .03, s.base[1] * .97 + s.lilac[1] * .03, s.base[2] * .97 + s.lilac[2] * .03, THREE.SRGBColorSpace);
+    scene.fog.color.copy(fogBase);
+    const n = s.night;
+    hemi.intensity = .9 - n * .45; hemi.color.setRGB(1 - n * .35, .97 - n * .25, .93 - n * .05, THREE.SRGBColorSpace);
+    sun.intensity = 1.3 - n * .9; sun.color.setRGB(1 - n * .4, .96 - n * .25, .9 + n * .1, THREE.SRGBColorSpace);
+    lamp.intensity = 9 + n * 10; // at night the cursor's lamp is a candle among the cards
+    if (ui.skyLabel) ui.skyLabel.textContent = phaseLabel[s.name];
+  }
+
   // ---------- Card geometry ----------
-  const CW = 1, CH = 1.757, CR = .055, CT = .016;
+  const CW = 1, CH = 5 / 3, CR = .05, CT = .016;
   const shape = (() => {
     const s = new THREE.Shape(), x = -CW / 2, y = -CH / 2, w = CW, h = CH, r = CR;
     s.moveTo(x + r, y); s.lineTo(x + w - r, y); s.quadraticCurveTo(x + w, y, x + w, y + r);
@@ -113,8 +134,25 @@ export function startDeck({ canvas, ui }) {
     const color = new THREE.CanvasTexture(make('#efe9df', '#a98650', 'rgba(169,134,80,.28)'));
     color.colorSpace = THREE.SRGBColorSpace; color.anisotropy = maxAniso;
     const metal = new THREE.CanvasTexture(make('#000', '#fff', 'rgba(255,255,255,.35)'));
-    return new THREE.MeshStandardMaterial({ map: color, metalnessMap: metal, metalness: 1, roughness: .42, envMapIntensity: 1.1 });
+    const mat = new THREE.MeshStandardMaterial({ map: color, metalnessMap: metal, metalness: 1, roughness: .38, envMapIntensity: 1.1 });
+    // Holographic foil: where the linework is gold, its colour shifts through the spectrum with the viewing angle
+    mat.onBeforeCompile = (shader) => {
+      shader.uniforms.uHoloT = holoT;
+      shader.fragmentShader = 'uniform float uHoloT;\n' + shader.fragmentShader.replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
+        {
+          vec3 vd = normalize(vViewPosition);
+          float facing = dot(normalize(normal), vd);
+          float band = facing * 2.2 + vMapUv.y * 1.6 + vMapUv.x * .9 + uHoloT;
+          vec3 holo = .55 + .45 * cos(6.28318 * (vec3(0., .33, .67) + band));
+          float foil = metalnessFactor;
+          diffuseColor.rgb = mix(diffuseColor.rgb, mix(diffuseColor.rgb, holo, .8), foil);
+          totalEmissiveRadiance += holo * foil * (.1 + .25 * pow(1. - abs(facing), 2.));
+          totalEmissiveRadiance += holo * .035 * (1. - foil) * pow(1. - abs(facing), 3.); // faint pearl sheen on the ivory
+        }`);
+    };
+    return mat;
   }
+  const holoT = { value: 0 };
   const backMat = paintBack();
 
   // ---------- Cards ----------
@@ -137,7 +175,7 @@ export function startDeck({ canvas, ui }) {
     const c = {
       i, data: d, group, turned, base: i / N * Math.PI * 2, seed: Math.random() * 100,
       px: spring((i - N / 2) * .02), py: spring(-2.6), pz: spring(2.4),
-      rx: spring(-1.2), ry: spring(0), rz: spring(0), flip: spring(turned ? 0 : 1), s: spring(1), shake: 0,
+      rx: spring(-1.2), ry: spring(0), rz: spring(0), flip: spring(turned ? 0 : 1), s: spring(1), shake: 0, loose: 0,
       release: reduceMotion ? 0 : .4 + i * .11, snap: reduceMotion,
     };
     group.position.set(c.px.x, c.py.x, c.pz.x);
@@ -172,8 +210,9 @@ export function startDeck({ canvas, ui }) {
   // ---------- Interaction ----------
   const pointer = new THREE.Vector2(), pointerS = new THREE.Vector2();
   let ringAngle = 0, ringVel = 0, ringTarget = null;
-  let dragging = false, downY = 0, downT = 0, lastX = 0, lastMoveT = 0, moved = 0;
-  let hovered = -1, selected = -1, lastInteract = performance.now();
+  let dragging = false, downY = 0, downT = 0, lastX = 0, lastMoveT = 0, moved = 0, downCard = -1;
+  const trail = []; // recent pointer samples, for measuring a flick
+  let hovered = -1, selected = -1, lastInteract = performance.now(), lockedOpen = false;
   const dim = spring(0);
   const ray = new THREE.Raycaster();
   const hitTargets = cards.flatMap((c) => c.group.children);
@@ -186,6 +225,8 @@ export function startDeck({ canvas, ui }) {
   }
   canvas.addEventListener('pointerdown', (e) => {
     dragging = true; moved = 0; lastX = e.clientX; downY = e.clientY; downT = lastMoveT = performance.now(); ringVel = 0;
+    downCard = selected < 0 ? pick(e) : -1;
+    trail.length = 0; trail.push({ x: e.clientX, y: e.clientY, t: downT });
     canvas.setPointerCapture(e.pointerId);
   });
   canvas.addEventListener('pointermove', (e) => {
@@ -195,6 +236,7 @@ export function startDeck({ canvas, ui }) {
     if (dragging) {
       const now = performance.now(), dx = e.clientX - lastX, et = Math.max(.008, (now - lastMoveT) / 1000);
       lastX = e.clientX; lastMoveT = now; moved += Math.abs(dx) + Math.abs(e.clientY - downY) * .1;
+      trail.push({ x: e.clientX, y: e.clientY, t: now }); if (trail.length > 8) trail.shift();
       if (moved > 6) {
         canvas.classList.add('dragging');
         if (selected < 0) { const step = dx * (narrow ? .009 : .005); ringAngle += step; ringVel = THREE.MathUtils.lerp(ringVel, step / et, .35); }
@@ -210,8 +252,26 @@ export function startDeck({ canvas, ui }) {
     if (moved <= 6 && performance.now() - downT < 500) {
       const hit = pick(e);
       if (selected >= 0) deselect(); else if (hit >= 0) select(hit);
+    } else if (downCard >= 0) {
+      // a fast swipe that started on a card tosses it: it spins, tumbles, and springs back to its place
+      const now = performance.now(), recent = trail.filter((p) => now - p.t < 90);
+      const a = recent[0] ?? trail[0];
+      if (a && now - a.t > 4) {
+        const vx = (e.clientX - a.x) / ((now - a.t) / 1000), vy = (e.clientY - a.y) / ((now - a.t) / 1000);
+        if (Math.hypot(vx, vy) > 650) { toss(downCard, vx, vy); ringVel *= .35; }
+      }
     }
+    downCard = -1;
   });
+  function toss(i, vx, vy) {
+    const c = cards[i], cap = (v, m) => Math.max(-m, Math.min(m, v));
+    c.ry.v += cap(vx * .016, 34);   // spin about the vertical
+    c.rx.v += cap(vy * .014, 26);   // tumble end over end
+    c.rz.v += cap(vx * .004, 8);
+    c.px.v += cap(vx * .006, 9); c.py.v += cap(-vy * .006, 8); c.pz.v += 3.5;
+    c.loose = 1.4; // springs stay soft for a moment so it can fly
+    play('whoosh');
+  }
   canvas.addEventListener('pointercancel', () => { dragging = false; canvas.classList.remove('dragging'); });
   canvas.addEventListener('pointerleave', () => { if (!dragging) { hovered = -1; pointer.set(0, 0); } });
   addEventListener('wheel', (e) => { if (selected < 0) { ringVel += (e.deltaY + e.deltaX) * .0009; lastInteract = performance.now(); } }, { passive: true });
@@ -230,7 +290,7 @@ export function startDeck({ canvas, ui }) {
     const c = cards[i], d = c.data;
     if (i === WORLD && !c.turned && othersTurned() < N - 1) {
       // The World turns last: shake it gently and say how many are left
-      c.shake = 1;
+      c.shake = 1; play('tick');
       const left = N - 1 - othersTurned();
       showReading({
         num: d.num, name: 'Not yet',
@@ -238,12 +298,15 @@ export function startDeck({ canvas, ui }) {
         inside: null, href: url(d.path), enterLabel: 'Or skip straight to hello',
       });
       ui.reading.dataset.locked = '';
-      setTimeout(() => { if (selected < 0) hideReading(); }, 4200);
+      lockedOpen = true;
+      setTimeout(() => { lockedOpen = false; if (selected < 0) hideReading(); }, 4200);
       return;
     }
-    selected = i; hovered = -1;
+    selected = i; hovered = -1; lockedOpen = false;
     const want = -c.base, diff = Math.atan2(Math.sin(want - ringAngle), Math.cos(want - ringAngle));
     ringTarget = ringAngle + diff;
+    play('flick');
+    if (!c.turned) setTimeout(() => play('chime'), 380);
     c.turned = true; markTurned(d.id); updateTally();
     showReading({ num: d.num, name: d.name, story: d.story, inside: d.inside, href: url(d.path), enterLabel: `Enter ${d.inside.toLowerCase()}` });
     delete ui.reading.dataset.locked;
@@ -292,8 +355,9 @@ export function startDeck({ canvas, ui }) {
   const held = new THREE.Vector3();
   function heldPosition() {
     const tanV = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
-    const dist = narrow ? 4.6 : 3.7, vh = 2 * dist * tanV, vw = vh * aspect;
-    return held.set(camera.position.x + (narrow ? 0 : vw * .16), camera.position.y + (narrow ? vh * .14 : 0), camera.position.z - dist);
+    // on phones the card sits in the gap between the header and the reading panel below it
+    const dist = narrow ? 5.9 : 3.7, vh = 2 * dist * tanV, vw = vh * aspect;
+    return held.set(camera.position.x + (narrow ? 0 : vw * .16), camera.position.y + (narrow ? vh * .09 : 0), camera.position.z - dist);
   }
 
   // ---------- Loop ----------
@@ -313,7 +377,8 @@ export function startDeck({ canvas, ui }) {
     camera.lookAt(0, selected >= 0 ? .1 : 0, 0);
     lamp.position.set(pointerS.x * 4.5, pointerS.y * 2.8 + .8, 4.6);
 
-    stepSpring(dim, selected >= 0 ? 1 : 0, 30, 11, dt);
+    stepSpring(dim, selected >= 0 || lockedOpen ? 1 : 0, 30, 11, dt);
+    holoT.value = t * .05;
     bgU.uDim.value = dim.x; bgU.uTime.value = t; bgU.uMouse.value.set(pointerS.x * .5 + .5, pointerS.y * .5 + .5);
     dustMat.uniforms.uTime.value = t;
     const front = camBase.z - ringR;
@@ -343,11 +408,16 @@ export function startDeck({ canvas, ui }) {
         flipT = c.turned ? 0 : 1; sT = isHov ? 1.05 : 1;
       }
       if (c.shake > 0) { trz += Math.sin(t * 38) * .09 * c.shake; c.shake = Math.max(0, c.shake - dt * 1.6); }
+      // aim for the nearest equivalent angle, so a spun or tumbled card settles forward instead of unwinding
       tryy = c.ry.x + Math.atan2(Math.sin(tryy - c.ry.x), Math.cos(tryy - c.ry.x));
+      trx = c.rx.x + Math.atan2(Math.sin(trx - c.rx.x), Math.cos(trx - c.rx.x));
       if (c.snap) { c.px.x = tx; c.py.x = ty; c.pz.x = tz; c.rx.x = trx; c.ry.x = tryy; c.rz.x = trz; c.flip.x = flipT; c.snap = false; }
-      const k = isSel ? 38 : 26, d = isSel ? 9.5 : 8.5;
+      const loose = c.loose > 0 ? Math.min(1, c.loose) : 0;
+      if (c.loose > 0) c.loose -= dt;
+      const k = (isSel ? 38 : 26) * (1 - loose * .85), d = (isSel ? 9.5 : 8.5) * (1 - loose * .7);
+      const rk = 40 * (1 - loose * .92), rd = 9 * (1 - loose * .8);
       stepSpring(c.px, tx, k, d, dt); stepSpring(c.py, ty, k, d, dt); stepSpring(c.pz, tz, k, d, dt);
-      stepSpring(c.rx, trx, 40, 9, dt); stepSpring(c.ry, tryy, 40, 9, dt); stepSpring(c.rz, trz, 60, 9, dt);
+      stepSpring(c.rx, trx, rk, rd, dt); stepSpring(c.ry, tryy, rk, rd, dt); stepSpring(c.rz, trz, 60 * (1 - loose * .9), 9, dt);
       stepSpring(c.flip, flipT, reduceMotion ? 200 : 46, reduceMotion ? 28 : 7.5, dt);
       stepSpring(c.s, sT, 120, 16, dt);
       c.group.position.set(c.px.x, c.py.x, c.pz.x);
@@ -361,6 +431,7 @@ export function startDeck({ canvas, ui }) {
     renderer.render(scene, camera);
     requestAnimationFrame(frame);
   }
+  applySky(); setInterval(applySky, 60000);
   updateTally();
   requestAnimationFrame(frame);
 }

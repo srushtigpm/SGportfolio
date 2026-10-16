@@ -2,7 +2,7 @@
 // A real card held up in the room: it turns over as the page opens,
 // floats gently, and tilts toward your pointer with a glint of light.
 import { url } from '../scripts/url.js';
-interface Props { file: string; name: string; size?: 'large' | 'small' }
+interface Props { file?: string; name: string; size?: 'large' | 'small' }
 const { file, name, size = 'large' } = Astro.props;
 const rays = Array.from({ length: 48 }, (_, i) => (i / 48) * Math.PI * 2);
 ---
@@ -10,18 +10,20 @@ const rays = Array.from({ length: 48 }, (_, i) => (i / 48) * Math.PI * 2);
   <div class="tilt">
     <div class="flip">
       <div class="face front">
-        <img src={url(`cards/${file}.webp`)} alt={`${name}, a Rider-Waite tarot card`} width="300" height="527" />
+        <slot>
+          <img src={url(`cards/${file}.webp`)} alt={`${name}, a Rider-Waite tarot card`} width="768" height="1280" />
+        </slot>
       </div>
       <div class="face back" aria-hidden="true">
-        <svg viewBox="0 0 300 527">
-          <rect x="12" y="12" width="276" height="503" rx="9" fill="none" stroke="#a98650" stroke-width="2" />
-          <rect x="18" y="18" width="264" height="491" rx="6" fill="none" stroke="#a98650" stroke-width=".8" />
+        <svg viewBox="0 0 300 500">
+          <rect x="12" y="12" width="276" height="476" rx="9" fill="none" stroke="#a98650" stroke-width="2" />
+          <rect x="18" y="18" width="264" height="464" rx="6" fill="none" stroke="#a98650" stroke-width=".8" />
           <g stroke="#a98650" stroke-opacity=".35" stroke-width=".7">
-            {rays.map((a) => <line x1={150 + Math.cos(a) * 58} y1={263.5 + Math.sin(a) * 58} x2={150 + Math.cos(a) * 400} y2={263.5 + Math.sin(a) * 400} />)}
+            {rays.map((a) => <line x1={150 + Math.cos(a) * 58} y1={250 + Math.sin(a) * 58} x2={150 + Math.cos(a) * 400} y2={250 + Math.sin(a) * 400} />)}
           </g>
-          <circle cx="150" cy="263.5" r="54" fill="#efe9df" stroke="#a98650" stroke-width="1.4" />
-          <circle cx="150" cy="263.5" r="48" fill="none" stroke="#a98650" stroke-width=".6" />
-          <circle cx="147" cy="263.5" r="24" fill="#a98650" />
+          <circle cx="150" cy="250" r="54" fill="#efe9df" stroke="#a98650" stroke-width="1.4" />
+          <circle cx="150" cy="250" r="48" fill="none" stroke="#a98650" stroke-width=".6" />
+          <circle cx="147" cy="250" r="24" fill="#a98650" />
           <circle cx="157" cy="260.5" r="22" fill="#efe9df" />
         </svg>
       </div>
@@ -34,20 +36,20 @@ const rays = Array.from({ length: 48 }, (_, i) => (i / 48) * Math.PI * 2);
   .held { perspective: 1100px; width: 100%; max-width: 19rem; margin-inline: auto; }
   .held.small { max-width: 9.5rem; }
   .tilt {
-    position: relative; aspect-ratio: 300 / 527; transform-style: preserve-3d;
+    position: relative; aspect-ratio: 3 / 5; transform-style: preserve-3d;
     transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
     animation: float 7s ease-in-out infinite;
   }
   .flip { position: absolute; inset: 0; transform-style: preserve-3d; animation: turn 1.6s cubic-bezier(.25, .9, .3, 1.12) .15s both; }
   .face {
-    position: absolute; inset: 0; border-radius: 4.5% / 2.6%; overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    position: absolute; inset: 0; border-radius: 4.5% / 2.7%; overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden;
     box-shadow: 0 0 0 1px var(--gilt-soft), 0 2.2rem 3rem -1.6rem rgba(43, 37, 48, .55), 0 .6rem 1.2rem -.6rem rgba(43, 37, 48, .3);
   }
   .front img { width: 100%; height: 100%; object-fit: cover; }
   .back { transform: rotateY(180deg); background: linear-gradient(180deg, #f3eee5, #e6dfd3); }
   .back svg { width: 100%; height: 100%; display: block; }
   .glare {
-    position: absolute; inset: 0; border-radius: 4.5% / 2.6%; pointer-events: none; transform: translateZ(1px);
+    position: absolute; inset: 0; border-radius: 4.5% / 2.7%; pointer-events: none; transform: translateZ(1px);
     background: radial-gradient(circle at var(--gx, 30%) var(--gy, 20%), rgba(255, 250, 238, .55), rgba(255, 250, 238, 0) 45%);
     mix-blend-mode: soft-light; opacity: var(--glare, .5);
   }

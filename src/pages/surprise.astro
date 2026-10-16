@@ -56,6 +56,7 @@ const places = [
 </style>
 
 <script>
+  import { play } from '../scripts/sound.js';
   const places: { label: string; kind: string; href: string }[] = JSON.parse(document.getElementById('places')!.textContent!);
   const wheel = document.getElementById('wheel')!, svg = wheel.querySelector('svg')!, landing = document.getElementById('landing')!;
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -67,6 +68,8 @@ const places = [
     turns += 1440 + Math.random() * 720;
     svg.style.transform = `rotate(${turns}deg)`;
     landing.textContent = 'Turning…';
+    // the pawl clicks past the spokes, slowing as the wheel does
+    if (!still) { let t = 0, gap = 40; const tick = () => { play('tick'); t += gap; gap *= 1.09; if (t < 3000) setTimeout(tick, gap); }; tick(); }
     setTimeout(() => {
       landing.innerHTML = '';
       const a = document.createElement('a'); a.href = pick.href; a.textContent = pick.label;

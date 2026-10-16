@@ -25,9 +25,25 @@ const ogImage = new URL(image ?? url('cards/00-TheFool.webp'), Astro.site).href;
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400;1,6..96,500&family=Hanken+Grotesk:wght@300;400;500&display=swap" />
+    <script is:inline>
+      // Before first paint: mark JS as available and switch to night colours if it's night for the visitor.
+      // (Same thresholds as src/scripts/sky.js.)
+      (function () {
+        var d = document.documentElement, p = null, n = new Date(), h = n.getHours() + n.getMinutes() / 60;
+        d.classList.add('js');
+        try { p = new URLSearchParams(location.search).get('sky'); } catch (e) {}
+        if (p ? p === 'night' : (h < 5.5 || h >= 19.5)) d.classList.add('is-night');
+      })();
+    </script>
     <slot name="head" />
   </head>
   <body>
     <slot />
+    <script>
+      import { startCursor } from '../scripts/cursor.js';
+      import { initSound } from '../scripts/sound.js';
+      startCursor();
+      initSound();
+    </script>
   </body>
 </html>
