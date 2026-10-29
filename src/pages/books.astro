@@ -2,33 +2,59 @@
 import { getCollection } from 'astro:content';
 import Room from '../layouts/Room.astro';
 import { site } from '../data/site.js';
-const books = await getCollection('books');
-// cloth colours for the spines and covers, chosen to sit quietly on pearl
-const cloth = ['#6e2f3a', '#2f3f5c', '#6d7a5e', '#b08a46', '#5a3d5c', '#46545f', '#a8665e', '#3e5a55', '#7b5b3a'];
-const sizes = books.map((b, i) => {
-  let h = 0; for (const ch of b.data.title) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
-  return { height: 13 + (h % 5) * 0.9, width: 2.4 + ((h >> 3) % 4) * 0.35, color: cloth[i % cloth.length] };
-});
-const statusText = { read: 'Read', reading: 'Reading now', quit: 'Put down, unfinished' };
+import { shelves, statusText } from '../data/shelves.js';
+import { url } from '../scripts/url.js';
+
+const books = (await getCollection('books')).map((b) => ({ id: b.id, ...b.data }));
+const known = new Set(shelves.map((s) => s.category));
+const missing = books.filter((b) => !known.has(b.category));
+if (missing.length) throw new Error(`Books with a category that has no shelf: ${missing.map((b) => `${b.title} (${b.category})`).join(', ')}`);
+
+const count = (st: string[]) => books.filter((b) => st.includes(b.status)).length;
+const filters = [
+  { id: 'mine', label: 'My shelf', statuses: ['reading', 'next', 'read', 'quit'] },
+  { id: 'reading', label: 'Reading now', statuses: ['reading'] },
+  { id: 'next', label: 'Up next', statuses: ['next'] },
+  { id: 'read', label: 'Read', statuses: ['read', 'quit'] },
+  { id: 'toread', label: 'Reading list', statuses: ['toread'] },
+  { id: 'all', label: 'Everything', statuses: ['reading', 'next', 'read', 'quit', 'toread'] },
+].map((f) => ({ ...f, n: count(f.statuses) }));
+const owner = site.name.replace(/\.$/, '');
+const data = { books, shelves, filters, statusText, owner, thumbs: url('cards/thumbs/') };
 ---
-<Room card="priestess" title="The shelf" intro="The books that rearranged my head. Pull one off the shelf, then turn its pages." wide>
+<Room card="priestess" title="The shelf" intro={`${books.length} books, each kept under the card that fits it. Pick a card to browse its shelf, then pull a book out and turn its pages.`} wide>
   <div class="library">
-    <div class="shelf" role="tablist" aria-label="Books">
-      {books.map((b, i) => (
-        <button
-          type="button" role="tab" class:list={['spine', b.data.status]} data-book={b.id}
-          aria-selected="false" aria-controls="table"
-          style={`--h:${sizes[i].height}rem; --w:${sizes[i].width}rem; --c:${sizes[i].color}; --d:${i * 0.06}s`}
-        >
-          <span class="t">{b.data.title}</span>
-          <span class="a">{b.data.author}</span>
+    <div class="deck-row" role="group" aria-label="Shelves">
+      <button type="button" class="pick all" data-shelf="" aria-pressed="true">
+        <span class="thumb back" aria-hidden="true"></span>
+        <span class="pick-name">Every shelf</span>
+        <span class="pick-n" data-n=""></span>
+      </button>
+      {shelves.map((s) => (
+        <button type="button" class="pick" data-shelf={s.category} aria-pressed="false" title={`${s.name}: ${s.category}`}>
+          <img class="thumb" src={url(`cards/thumbs/${s.card}.webp`)} alt="" width="240" height="400" loading="lazy" />
+          <span class="pick-name">{s.short}</span>
+          <span class="pick-n" data-n={s.category}></span>
         </button>
       ))}
     </div>
-    <div class="ledge" aria-hidden="true"></div>
 
-    <div class="table" id="table" role="tabpanel" aria-live="polite">
-      <p class="table-hint" id="hint">Pull a book off the shelf.</p>
+    <p class="shelf-caption" id="caption" aria-live="polite">Every book, on every shelf.</p>
+
+    <div class="filters">
+      <div class="pills" role="radiogroup" aria-label="Show">
+        {filters.map((f, i) => (
+          <button type="button" role="radio" class="pill" data-filter={f.id} aria-checked={i === 0 ? 'true' : 'false'}>{f.label} <span>{f.n}</span></button>
+        ))}
+      </div>
+      <label class="find"><span class="visually-hidden">Find a book</span><input id="find" type="search" placeholder="Find a title or author" autocomplete="off" /></label>
+    </div>
+
+    <div class="bookcase" id="bookcase" role="list" aria-label="Books"></div>
+    <p class="empty" id="empty" hidden>No books on this shelf yet.</p>
+
+    <div class="table" id="table" aria-live="polite">
+      <p class="table-hint">Pull a book off the shelf.</p>
       <div class="book" id="book" tabindex="-1" hidden>
         <div class="block" aria-hidden="true"></div>
         <div class="base face"><div class="endpaper"></div></div>
@@ -37,100 +63,92 @@ const statusText = { read: 'Read', reading: 'Reading now', quit: 'Put down, unfi
         <div class="leaf" data-i="2"><div class="face front" data-slot="more"></div><div class="face back" data-slot="end"></div></div>
       </div>
       <div class="controls" id="controls" hidden>
-        <button type="button" id="prev" aria-label="Previous page">Back a page</button>
-        <button type="button" id="next" aria-label="Next page">Turn the page</button>
+        <button type="button" id="prev">Back a page</button>
+        <button type="button" id="next">Turn the page</button>
         <button type="button" id="putback">Put it back</button>
       </div>
     </div>
 
-    {books.map((b, i) => (
-      <template id={`tpl-${b.id}`} data-cloth={sizes[i].color}>
-        <div data-slot="cover">
-          <div class="cover-in">
-            <svg class="emblem" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="14" fill="none" stroke="currentColor" stroke-width="1" /><path d="M23 11a9 9 0 1 0 0 18 7 7 0 1 1 0-18Z" fill="currentColor" /></svg>
-            <h3>{b.data.title}</h3>
-            <span class="rule"></span>
-            <p>{b.data.author}</p>
-          </div>
-        </div>
-        <div data-slot="inside">
-          <div class="endpaper">
-            <div class="plate"><span>Ex libris</span><b>{site.name.replace(/\.$/, '')}</b><em>{statusText[b.data.status]}</em></div>
-          </div>
-        </div>
-        <div data-slot="note">
-          <div class="page-in">
-            <p class="kicker">Why it stayed</p>
-            <p class="body">{b.data.note}</p>
-            <span class="folio">1</span>
-          </div>
-        </div>
-        <div data-slot="line">
-          <div class="page-in quote">
-            {b.data.line
-              ? <><p class="kicker">A line I keep</p><blockquote>{b.data.line}</blockquote></>
-              : <><p class="kicker">{b.data.title}</p><blockquote>{b.data.author}</blockquote></>}
-            <span class="folio">2</span>
-          </div>
-        </div>
-        <div data-slot="more">
-          <div class="page-in">
-            {b.data.thoughts
-              ? <><p class="kicker">More thoughts</p><p class="body">{b.data.thoughts}</p></>
-              : <><p class="kicker">{statusText[b.data.status]}</p><p class="body">That’s all I wrote in the margins of this one.</p></>}
-            <span class="folio">3</span>
-          </div>
-        </div>
-        <div data-slot="end">
-          <div class="page-in fin"><span>Fin.</span></div>
-        </div>
-      </template>
-    ))}
+    <script is:inline type="application/json" id="books-data" set:html={JSON.stringify(data)}></script>
 
-    <div class="no-js-notes">
-      {books.map((b) => (
-        <article class="note">
-          <p class="status">{statusText[b.data.status]}</p>
-          <h2>{b.data.title}</h2>
-          <p class="author">{b.data.author}</p>
-          <p>{b.data.note}</p>
-          {b.data.line && <blockquote>{b.data.line}</blockquote>}
-        </article>
+    <div class="no-js">
+      {shelves.map((s) => (
+        <section>
+          <h2>{s.name} · {s.category}</h2>
+          <ul>{books.filter((b) => b.category === s.category).map((b) => <li><b>{b.title}</b>, {b.author} <em>{statusText[b.status]}</em></li>)}</ul>
+        </section>
       ))}
     </div>
   </div>
 </Room>
 
 <style>
-  .library { max-width: 54rem; }
+  .library { max-width: 56rem; }
 
-  /* ---------- Shelf ---------- */
-  .shelf { display: flex; align-items: flex-end; gap: 3px; min-height: 17rem; overflow-x: auto; padding: 2.5rem .6rem 0; scrollbar-width: thin; }
-  .spine {
-    flex: none; width: var(--w); height: var(--h); position: relative; cursor: pointer; border: 0; padding: .9rem 0 .6rem;
-    display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: .6rem;
+  /* ---------- Choosing a shelf by its card ---------- */
+  .deck-row { display: flex; gap: .7rem; overflow-x: auto; padding: 1rem .2rem 1.1rem; margin-inline: -.2rem; scrollbar-width: thin; scroll-snap-type: x proximity; }
+  .pick { flex: none; width: 4.6rem; display: grid; justify-items: center; gap: .35rem; padding: 0; border: 0; background: none; color: var(--ink); cursor: pointer; scroll-snap-align: start; }
+  .thumb { width: 4.2rem; height: auto; aspect-ratio: 3 / 5; border-radius: 5px; box-shadow: 0 0 0 1px var(--gilt-soft), 0 .6rem .9rem -.5rem rgba(30, 24, 36, .55); transition: transform .6s cubic-bezier(.2, .8, .2, 1.2), box-shadow .6s, filter .5s; }
+  .thumb.back {
+    display: block;
+    background:
+      radial-gradient(circle at 50% 50%, transparent 0 18%, #a98650 18.5% 20%, transparent 20.5%),
+      repeating-conic-gradient(from 0deg at 50% 50%, rgba(169, 134, 80, .35) 0 2deg, transparent 2deg 15deg),
+      linear-gradient(180deg, #f3eee5, #e6dfd3);
+  }
+  .pick:hover .thumb { transform: translateY(-4px) rotate(-2deg); }
+  .pick[aria-pressed="true"] .thumb { transform: translateY(-8px); box-shadow: 0 0 0 2px var(--gilt), 0 1rem 1.2rem -.6rem rgba(30, 24, 36, .6); }
+  .pick.dim .thumb { filter: grayscale(.85) opacity(.45); }
+  .pick-name { font: italic 400 .82rem/1.15 var(--display); text-align: center; }
+  .pick-n { font: 500 .6rem var(--ui); letter-spacing: .14em; color: var(--gilt); font-variant-numeric: tabular-nums; }
+  .shelf-caption { margin: .2rem 0 1rem; font: italic 400 1.05rem/1.5 var(--display); color: var(--haze); min-height: 1.6em; max-width: 44rem; }
+  .shelf-caption :global(b) { font-weight: 400; color: var(--ink); }
+
+  .filters { display: flex; flex-wrap: wrap; gap: .8rem 1.2rem; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; }
+  .pills { display: flex; flex-wrap: wrap; gap: .4rem; }
+  .pill { border: 1px solid var(--hair); background: none; color: var(--ink); border-radius: 99px; padding: .4rem .8rem; font: 400 .74rem var(--ui); letter-spacing: .04em; cursor: pointer; transition: background .3s, color .3s; }
+  .pill span { color: var(--gilt); margin-left: .2rem; font-variant-numeric: tabular-nums; }
+  .pill[aria-checked="true"] { background: var(--ink); color: var(--pearl); border-color: var(--ink); }
+  .pill[aria-checked="true"] span { color: var(--gilt-soft); }
+  .find input { width: min(15rem, 100%); padding: .5rem .9rem; border-radius: 99px; border: 1px solid var(--hair); background: var(--veil); color: var(--ink); font: 400 .85rem var(--ui); }
+  .find input::placeholder { color: var(--haze); }
+
+  /* ---------- The bookcase: spines stand on repeating ledges ---------- */
+  .bookcase {
+    --row: 11.2rem; --ledge: 11px;
+    display: flex; flex-wrap: wrap; align-content: flex-start; column-gap: 2px; padding-inline: .5rem;
+    max-height: calc(var(--row) * 2.55); overflow-y: auto; scrollbar-width: thin; overscroll-behavior: contain;
+    background: repeating-linear-gradient(180deg,
+      transparent 0 calc(var(--row) - var(--ledge)),
+      #ddd1bb calc(var(--row) - var(--ledge)), #bba98b calc(var(--row) - 1px), rgba(43, 37, 48, .25) calc(var(--row) - 1px) var(--row));
+    border-radius: 4px;
+  }
+  .bookcase :global(.slot) { height: var(--row); padding-bottom: var(--ledge); display: flex; align-items: flex-end; }
+  .bookcase :global(.spine) {
+    flex: none; width: var(--w); height: var(--h); position: relative; cursor: pointer; border: 0; padding: .7rem 0 .5rem;
+    display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: .4rem;
     color: #f3ece0; border-radius: 3px 3px 1px 1px;
     background:
       linear-gradient(90deg, rgba(0,0,0,.28), rgba(255,255,255,.12) 22%, rgba(255,255,255,0) 45%, rgba(0,0,0,.18) 85%, rgba(0,0,0,.32)),
-      linear-gradient(180deg, transparent 8%, rgba(214, 180, 112, .55) 8.4%, transparent 9.2%, transparent 90%, rgba(214, 180, 112, .55) 90.4%, transparent 91.2%),
+      linear-gradient(180deg, transparent 7%, rgba(214, 180, 112, .55) 7.4%, transparent 8.4%, transparent 91%, rgba(214, 180, 112, .55) 91.4%, transparent 92.4%),
       var(--c);
-    box-shadow: 0 .3rem .6rem -.2rem rgba(43, 37, 48, .4);
-    transform-origin: 50% 100%;
-    transition: transform .7s cubic-bezier(.2, .8, .2, 1.1), box-shadow .7s, opacity .6s;
-    animation: shelve .9s cubic-bezier(.2, .8, .2, 1) var(--d) both;
+    box-shadow: 0 .3rem .5rem -.2rem rgba(43, 37, 48, .4);
+    transform-origin: 50% 100%; transition: transform .6s cubic-bezier(.2, .8, .2, 1.1), opacity .5s;
+    animation: shelve .7s cubic-bezier(.2, .8, .2, 1) var(--d) both;
   }
-  .spine.quit { transform: rotate(-5deg); margin-inline: .35rem .1rem; }
-  .spine.reading::after { content: ""; position: absolute; bottom: -1.1rem; left: 50%; width: .4rem; height: 1.5rem; margin-left: -.2rem; background: #b33c3c; clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%); }
-  .spine:hover { transform: translateY(-.6rem) rotate(-1.5deg); }
-  .spine.quit:hover { transform: rotate(-7deg) translateY(-.5rem); }
-  .spine.out { opacity: .14; transform: translateY(-.3rem); }
-  .t, .a { writing-mode: vertical-rl; transform: rotate(180deg); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-height: 72%; }
-  .t { font: italic 400 .95rem/1 var(--display); }
-  .a { font: 500 .52rem/1 var(--ui); letter-spacing: .16em; text-transform: uppercase; opacity: .8; max-height: 22%; }
-  .ledge { height: 10px; border-radius: 2px; background: linear-gradient(180deg, #d9cdb8, #bba98b); box-shadow: 0 10px 18px -8px rgba(43, 37, 48, .45), inset 0 1px 0 rgba(255,255,255,.6); }
+  .bookcase :global(.spine.next) { transform: rotate(-4deg); margin-inline: .3rem .1rem; }
+  .bookcase :global(.spine.reading::after) { content: ""; position: absolute; bottom: -.9rem; left: 50%; width: .35rem; height: 1.2rem; margin-left: -.18rem; background: #b33c3c; clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%); z-index: 1; }
+  .bookcase :global(.spine.read::before) { content: ""; position: absolute; top: .3rem; left: 50%; width: .3rem; height: .3rem; margin-left: -.15rem; transform: rotate(45deg); background: #e2c27f; }
+  .bookcase :global(.spine:hover) { transform: translateY(-.5rem) rotate(-1.5deg); }
+  .bookcase :global(.spine.next:hover) { transform: rotate(-6deg) translateY(-.4rem); }
+  .bookcase :global(.spine.out) { opacity: .14; transform: translateY(-.25rem); }
+  .bookcase :global(.t), .bookcase :global(.a) { writing-mode: vertical-rl; transform: rotate(180deg); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bookcase :global(.t) { font: italic 400 .8rem/1 var(--display); max-height: 74%; }
+  .bookcase :global(.a) { font: 500 .46rem/1 var(--ui); letter-spacing: .14em; text-transform: uppercase; opacity: .8; max-height: 20%; }
+  .empty { margin: 1rem 0 0; font: italic 400 1.1rem var(--display); color: var(--haze); }
 
   /* ---------- Reading table ---------- */
-  .table { --P: min(15.5rem, 44vw); position: relative; margin-top: 2.2rem; min-height: calc(var(--P) * 1.42 + 6rem); display: grid; place-items: center; perspective: 2200px; }
+  .table { --P: min(15rem, 44vw); position: relative; margin-top: 2.4rem; min-height: calc(var(--P) * 1.42 + 6rem); display: grid; place-items: center; perspective: 2200px; scroll-margin-top: 2rem; }
   .table-hint { position: absolute; font: italic 400 1.2rem var(--display); color: var(--haze); margin: 0; transition: opacity .5s; }
   .table.has-book .table-hint { opacity: 0; }
   .book {
@@ -147,20 +165,15 @@ const statusText = { read: 'Read', reading: 'Reading now', quit: 'Put down, unfi
   .leaf { transform-origin: 0 50%; transform-style: preserve-3d; transform: rotateY(var(--a, 0deg)) translateZ(var(--z, 0px)); }
   .face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; overflow: hidden; border-radius: 0 3px 3px 0; }
   .face.back { transform: rotateY(180deg); border-radius: 3px 0 0 3px; }
-  /* the paper darkens as a page lifts toward you, lit from the front */
   .leaf .face::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(40, 30, 20, .55), rgba(40, 30, 20, 0) 70%); opacity: var(--shade, 0); }
   .leaf .face.back::after { background: linear-gradient(270deg, rgba(40, 30, 20, .55), rgba(40, 30, 20, 0) 70%); }
   .block { transform: translateZ(-2px); background: var(--paper); border-radius: 0 3px 3px 0; box-shadow: 1px 0 0 #e2d8c5, 2px 0 0 #f2ebdd, 3px 0 0 #ddd2bd, 4px 1px 0 #efe6d4, 5px 1px 0 #d8ccb5; }
   .base { transform: translateZ(-1px); }
 
-  /* pages */
   .book :global(.page-in) {
     position: absolute; inset: 0; display: flex; flex-direction: column; gap: .9em; padding: 13% 12% 14%;
     color: var(--ink-b); font-size: max(11px, 2.7cqi); line-height: 1.6; overflow: auto;
-    background:
-      linear-gradient(90deg, rgba(120, 95, 60, .16), rgba(120, 95, 60, 0) 12%),
-      radial-gradient(120% 90% at 70% 40%, rgba(255, 255, 255, .5), rgba(255, 255, 255, 0)),
-      var(--paper);
+    background: linear-gradient(90deg, rgba(120, 95, 60, .16), rgba(120, 95, 60, 0) 12%), radial-gradient(120% 90% at 70% 40%, rgba(255, 255, 255, .5), rgba(255, 255, 255, 0)), var(--paper);
   }
   .book :global(.face.back .page-in) { background: linear-gradient(270deg, rgba(120, 95, 60, .16), rgba(120, 95, 60, 0) 12%), radial-gradient(120% 90% at 30% 40%, rgba(255, 255, 255, .5), rgba(255, 255, 255, 0)), var(--paper); }
   .book :global(.kicker) { margin: 0; font: 500 .7em/1.3 var(--ui); letter-spacing: .22em; text-transform: uppercase; color: #8c6c35; }
@@ -170,9 +183,11 @@ const statusText = { read: 'Read', reading: 'Reading now', quit: 'Put down, unfi
   .book :global(.folio) { position: absolute; bottom: 6%; left: 0; right: 0; text-align: center; font: italic 400 .85em var(--display); color: #8c6c35; }
   .book :global(.fin) { align-items: center; justify-content: center; }
   .book :global(.fin span) { font: italic 400 2em var(--display); color: #8c6c35; }
+  .book :global(.shelved) { align-items: center; justify-content: center; text-align: center; gap: .6em; }
+  .book :global(.shelved img) { width: 34%; border-radius: 4px; box-shadow: 0 0 0 1px #c9a865, 0 .6em 1em -.5em rgba(30, 24, 36, .5); transform: rotate(-3deg); }
+  .book :global(.shelved b) { font: italic 400 1.5em/1.1 var(--display); }
+  .book :global(.shelved small) { font-size: .9em; color: #6a6370; }
 
-  /* cover */
-  .book :global([data-slot="cover"]), .book :global(.face.front[data-slot="cover"]) { background: none; }
   .book :global(.cover-in) {
     position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .7em; padding: 14% 12%; text-align: center;
     color: #e9cf96; font-size: max(11px, 2.7cqi);
@@ -183,12 +198,10 @@ const statusText = { read: 'Read', reading: 'Reading now', quit: 'Put down, unfi
       var(--cloth);
     box-shadow: inset 0 0 0 .6em var(--cloth), inset 0 0 0 calc(.6em + 1px) #c9a865, inset 0 0 0 calc(.9em + 1px) var(--cloth), inset 0 0 0 calc(.9em + 2px) rgba(201, 168, 101, .6);
   }
-  .book :global(.cover-in h3) { margin: 0; font: italic 400 1.9em/1.1 var(--display); text-wrap: balance; text-shadow: 0 1px 0 rgba(0,0,0,.35); }
-  .book :global(.cover-in p) { margin: 0; font: 500 .7em var(--ui); letter-spacing: .24em; text-transform: uppercase; }
+  .book :global(.cover-in h3) { margin: 0; font: italic 400 1.75em/1.1 var(--display); text-wrap: balance; text-shadow: 0 1px 0 rgba(0,0,0,.35); }
+  .book :global(.cover-in p) { margin: 0; font: 500 .66em var(--ui); letter-spacing: .22em; text-transform: uppercase; }
   .book :global(.cover-in .rule) { width: 30%; height: 1px; background: currentColor; opacity: .7; }
   .book :global(.emblem) { width: 22%; }
-
-  /* endpapers: marbled in the cover's colour */
   .book :global(.endpaper) {
     position: absolute; inset: 0; display: grid; place-items: center;
     background:
@@ -198,10 +211,7 @@ const statusText = { read: 'Read', reading: 'Reading now', quit: 'Put down, unfi
       radial-gradient(circle at 85% 15%, color-mix(in srgb, var(--cloth) 40%, transparent) 0 4%, transparent 5%),
       repeating-radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--cloth) 18%, var(--paper)) 0 .6em, var(--paper) .6em 1.2em);
   }
-  .book :global(.plate) {
-    display: grid; justify-items: center; gap: .35em; padding: 1.2em 1.6em; background: var(--paper); color: var(--ink-b);
-    box-shadow: 0 0 0 1px #c9a865, 0 0 0 4px var(--paper), 0 0 0 5px rgba(201, 168, 101, .6); font-size: max(10px, 2.4cqi);
-  }
+  .book :global(.plate) { display: grid; justify-items: center; gap: .35em; padding: 1.2em 1.6em; background: var(--paper); color: var(--ink-b); box-shadow: 0 0 0 1px #c9a865, 0 0 0 4px var(--paper), 0 0 0 5px rgba(201, 168, 101, .6); font-size: max(10px, 2.4cqi); text-align: center; }
   .book :global(.plate span) { font: 500 .65em var(--ui); letter-spacing: .26em; text-transform: uppercase; color: #8c6c35; }
   .book :global(.plate b) { font: italic 400 1.6em/1 var(--display); }
   .book :global(.plate em) { font: italic 400 .9em var(--display); color: #6a6370; }
@@ -211,56 +221,146 @@ const statusText = { read: 'Read', reading: 'Reading now', quit: 'Put down, unfi
   .controls button:hover { color: var(--ink); }
   .controls button:disabled { opacity: .35; }
 
-  .no-js-notes { display: none; margin-top: 2rem; gap: 2rem; }
-  :global(html:not(.js)) .no-js-notes { display: grid; }
-  :global(html:not(.js)) .table { display: none; }
-  .note h2 { margin: 0; font: italic 400 1.8rem/1.1 var(--display); }
-  .note p { margin: .3rem 0 0; }
-  .note .status { font: 500 .66rem var(--ui); letter-spacing: .22em; text-transform: uppercase; color: var(--gilt); }
-  .note blockquote { margin: .6rem 0 0; padding-left: 1rem; border-left: 1px solid var(--gilt-soft); font: italic 400 1.2rem var(--display); color: var(--haze); }
+  .no-js { display: none; }
+  :global(html:not(.js)) .no-js { display: grid; gap: 1.6rem; margin-top: 1rem; }
+  :global(html:not(.js)) .table, :global(html:not(.js)) .filters, :global(html:not(.js)) .deck-row, :global(html:not(.js)) .bookcase { display: none; }
+  .no-js h2 { font: italic 400 1.4rem var(--display); margin: 0 0 .4rem; }
+  .no-js ul { margin: 0; padding-left: 1.1rem; }
+  .no-js em { color: var(--haze); font-size: .85em; }
 
-  @keyframes shelve { from { opacity: 0; transform: translateY(-30px); } }
+  @keyframes shelve { from { opacity: 0; transform: translateY(-24px); } }
 </style>
 
 <script>
   import { play } from '../scripts/sound.js';
 
-  const table = document.getElementById('table')!, book = document.getElementById('book')!, hint = document.getElementById('hint')!;
-  const controls = document.getElementById('controls')!, prevBtn = document.getElementById('prev') as HTMLButtonElement, nextBtn = document.getElementById('next') as HTMLButtonElement;
-  const spines = [...document.querySelectorAll<HTMLButtonElement>('.spine')];
-  const leafEls = [...book.querySelectorAll<HTMLElement>('.leaf')];
+  type Book = { id: string; title: string; author: string; category: string; status: string; about?: string; note?: string; line?: string; thoughts?: string; year?: string };
+  type Shelf = { category: string; short: string; card: string; num: string; name: string; why: string; cloth: [number, number, number] };
+  const D = JSON.parse(document.getElementById('books-data')!.textContent!) as {
+    books: Book[]; shelves: Shelf[]; filters: { id: string; label: string; statuses: string[] }[]; statusText: Record<string, string>; owner: string; thumbs: string;
+  };
+  const shelfOf = Object.fromEntries(D.shelves.map((s) => [s.category, s]));
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  type Spring = { x: number; v: number; t: number };
-  const leaves: (Spring & { held: boolean })[] = leafEls.map(() => ({ x: 0, v: 0, t: 0, held: false }));
-  const fly: Spring = { x: 0, v: 0, t: 0 };     // 0 = on the shelf, 1 = on the table
-  let from = { dx: 0, dy: 0, scale: .2 };
-  let current: string | null = null, currentSpine: HTMLButtonElement | null = null;
-  let closing: (() => void) | null = null, openedCover = false;
+  const $ = (id: string) => document.getElementById(id)!;
+  const bookcase = $('bookcase'), empty = $('empty'), caption = $('caption'), find = $('find') as HTMLInputElement;
+  const table = $('table'), book = $('book'), controls = $('controls');
+  const prevBtn = $('prev') as HTMLButtonElement, nextBtn = $('next') as HTMLButtonElement;
+  const picks = [...document.querySelectorAll<HTMLButtonElement>('.pick')];
+  const pills = [...document.querySelectorAll<HTMLButtonElement>('.pill')];
 
-  function fill(id: string) {
-    const tpl = document.getElementById(`tpl-${id}`) as HTMLTemplateElement;
-    book.style.setProperty('--cloth', tpl.dataset.cloth!);
-    tpl.content.querySelectorAll<HTMLElement>('[data-slot]').forEach((src) => {
-      const dst = book.querySelector<HTMLElement>(`.face[data-slot="${src.dataset.slot}"]`)!;
-      dst.replaceChildren(...[...src.childNodes].map((n) => n.cloneNode(true)));
+  // ---------- Spines ----------
+  const hash = (s: string) => { let h = 0; for (const ch of s) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h; };
+  const look = (b: Book) => {
+    const h = hash(b.title), [hue, sat, lig] = shelfOf[b.category].cloth;
+    return {
+      height: 8.4 + (h % 6) * .45, width: 1.55 + ((h >> 3) % 5) * .2,
+      color: `hsl(${hue + ((h >> 6) % 17) - 8} ${sat}% ${lig + ((h >> 9) % 11) - 5}%)`,
+    };
+  };
+  const order: Record<string, number> = { reading: 0, next: 1, read: 2, quit: 3, toread: 4 };
+  let shelf = '', filter = 'mine', query = '';
+
+  function visible() {
+    const st = D.filters.find((f) => f.id === filter)!.statuses, q = query.trim().toLowerCase();
+    return D.books.filter((b) => st.includes(b.status) && (!q || `${b.title} ${b.author}`.toLowerCase().includes(q)));
+  }
+  function render() {
+    const pool = visible(), list = pool.filter((b) => !shelf || b.category === shelf)
+      .sort((a, b) => order[a.status] - order[b.status] || D.shelves.indexOf(shelfOf[a.category]) - D.shelves.indexOf(shelfOf[b.category]));
+    bookcase.replaceChildren(...list.map((b, i) => {
+      const L = look(b), slot = document.createElement('div'); slot.className = 'slot'; slot.setAttribute('role', 'listitem');
+      const s = document.createElement('button'); s.type = 'button'; s.className = `spine ${b.status}`; s.dataset.id = b.id;
+      s.style.cssText = `--h:${L.height}rem;--w:${L.width}rem;--c:${L.color};--d:${Math.min(i, 40) * .015}s`;
+      s.setAttribute('aria-label', `${b.title} by ${b.author}, ${D.statusText[b.status]}`);
+      const t = document.createElement('span'); t.className = 't'; t.textContent = b.title;
+      const a = document.createElement('span'); a.className = 'a'; a.textContent = b.author;
+      s.append(t, a); if (b.id === current) s.classList.add('out');
+      s.addEventListener('click', () => { table.scrollIntoView({ behavior: still ? 'auto' : 'smooth', block: 'nearest' }); pull(b.id, s); });
+      slot.append(s); return slot;
+    }));
+    empty.hidden = list.length > 0;
+    // counts on each shelf card for what's currently showing
+    picks.forEach((p) => {
+      const cat = p.dataset.shelf!, n = cat ? pool.filter((b) => b.category === cat).length : pool.length;
+      p.querySelector('.pick-n')!.textContent = String(n);
+      p.classList.toggle('dim', n === 0);
     });
-    const end = book.querySelector<HTMLElement>('.base')!;
-    end.replaceChildren(Object.assign(document.createElement('div'), { className: 'endpaper' }));
+    const s = shelfOf[shelf];
+    caption.innerHTML = '';
+    if (s) { const b = document.createElement('b'); b.textContent = `${s.num} · ${s.name}.`; caption.append(b, ` ${s.why}`); }
+    else caption.textContent = 'Every book, on every shelf. Each card keeps one kind of book.';
+  }
+  picks.forEach((p) => p.addEventListener('click', () => {
+    shelf = shelf === p.dataset.shelf ? '' : p.dataset.shelf!;
+    picks.forEach((q) => q.setAttribute('aria-pressed', String((q.dataset.shelf || '') === shelf)));
+    play('flick'); render();
+  }));
+  pills.forEach((p) => p.addEventListener('click', () => {
+    filter = p.dataset.filter!; pills.forEach((q) => q.setAttribute('aria-checked', String(q === p))); render();
+  }));
+  find.addEventListener('input', () => { query = find.value; render(); });
+
+  // ---------- The open book ----------
+  type Spring = { x: number; v: number; t: number };
+  const leafEls = [...book.querySelectorAll<HTMLElement>('.leaf')];
+  const leaves: (Spring & { held: boolean })[] = leafEls.map(() => ({ x: 0, v: 0, t: 0, held: false }));
+  const fly: Spring = { x: 0, v: 0, t: 0 };
+  let from = { dx: 0, dy: 0, scale: .2 };
+  let current: string | null = null, closing: (() => void) | null = null, openedCover = false, closeFast = false;
+
+  const el = (tag: string, cls?: string, text?: string) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  function fill(b: Book) {
+    const s = shelfOf[b.category];
+    book.style.setProperty('--cloth', look(b).color);
+    const set = (slot: string, ...kids: Node[]) => book.querySelector(`.face[data-slot="${slot}"]`)!.replaceChildren(...kids);
+
+    const cover = el('div', 'cover-in');
+    cover.innerHTML = '<svg class="emblem" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="14" fill="none" stroke="currentColor" stroke-width="1"/><path d="M23 11a9 9 0 1 0 0 18 7 7 0 1 1 0-18Z" fill="currentColor"/></svg>';
+    cover.append(el('h3', '', b.title), el('span', 'rule'), el('p', '', b.author));
+    set('cover', cover);
+
+    const plate = el('div', 'plate');
+    plate.append(el('span', '', 'Ex libris'), el('b', '', D.owner), el('em', '', b.year && b.status === 'read' ? `Read in ${b.year}` : D.statusText[b.status]));
+    const endp = el('div', 'endpaper'); endp.append(plate); set('inside', endp);
+
+    const p1 = el('div', 'page-in');
+    p1.append(el('p', 'kicker', b.note ? 'Why it stayed' : 'About the book'), el('p', 'body', b.note || b.about || 'No description yet.'), el('span', 'folio', '1'));
+    set('note', p1);
+
+    let p2: HTMLElement;
+    if (b.line) { p2 = el('div', 'page-in quote'); p2.append(el('p', 'kicker', 'A line I keep'), el('blockquote', '', b.line)); }
+    else {
+      p2 = el('div', 'page-in shelved');
+      const img = el('img') as HTMLImageElement; img.src = `${D.thumbs}${s.card}.webp`; img.alt = s.name;
+      p2.append(el('p', 'kicker', 'Shelved under'), img, el('b', '', s.name), el('small', '', s.category));
+    }
+    p2.append(el('span', 'folio', '2')); set('line', p2);
+
+    const p3 = el('div', 'page-in');
+    const statusLine: Record<string, string> = {
+      reading: 'On my nightstand right now.', next: 'Next in the pile.', read: b.year ? `Finished in ${b.year}.` : 'Finished.',
+      toread: 'Waiting its turn on my reading list.', quit: 'Put down before the end.',
+    };
+    if (b.thoughts) p3.append(el('p', 'kicker', 'More thoughts'), el('p', 'body', b.thoughts));
+    else p3.append(el('p', 'kicker', D.statusText[b.status]), el('p', 'body', statusLine[b.status]));
+    p3.append(el('span', 'folio', '3')); set('more', p3);
+
+    const fin = el('div', 'page-in fin'); fin.append(el('span', '', 'Fin.')); set('end', fin);
   }
 
-  function pull(spine: HTMLButtonElement, auto = false) {
-    const id = spine.dataset.book!;
+  function pull(id: string, spine: HTMLElement | null, auto = false) {
     if (current === id) { putBack(); return; }
-    if (current) { putBack(() => pull(spine, auto)); return; }
-    current = id; currentSpine = spine; openedCover = false;
-    fill(id);
+    if (current) { putBack(() => pull(id, bookcase.querySelector<HTMLElement>(`.spine[data-id="${CSS.escape(id)}"]`), auto)); return; }
+    const b = D.books.find((x) => x.id === id)!;
+    current = id; openedCover = false; closeFast = false;
+    fill(b);
     book.hidden = false; controls.hidden = false; table.classList.add('has-book');
-    spines.forEach((s) => s.setAttribute('aria-selected', String(s === spine)));
-    spine.classList.add('out');
-    // fly from the spine's place on the shelf to the middle of the table
-    const sr = spine.getBoundingClientRect(), tr = table.getBoundingClientRect();
-    from = { dx: sr.left + sr.width / 2 - (tr.left + tr.width / 2), dy: sr.top + sr.height / 2 - (tr.top + tr.height / 2), scale: Math.max(.15, sr.height / book.offsetHeight) };
+    spine?.classList.add('out');
+    const tr = table.getBoundingClientRect(), sr = spine?.getBoundingClientRect();
+    from = sr
+      ? { dx: sr.left + sr.width / 2 - (tr.left + tr.width / 2), dy: sr.top + sr.height / 2 - (tr.top + tr.height / 2), scale: Math.max(.15, sr.height / book.offsetHeight) }
+      : { dx: 0, dy: -200, scale: .3 };
     leaves.forEach((l) => { l.x = 0; l.v = 0; l.t = 0; });
     fly.x = still ? 1 : 0; fly.v = 0; fly.t = 1;
     play('flick');
@@ -269,49 +369,42 @@ const statusText = { read: 'Read', reading: 'Reading now', quit: 'Put down, unfi
 
   function putBack(then?: () => void) {
     if (!current) { then?.(); return; }
-    leaves.forEach((l, i) => { if (l.t !== 0) setTimeout(() => { l.t = 0; }, (leaves.length - 1 - i) * 120); });
+    // swapping to another book closes this one briskly; putting it back is unhurried
+    const swap = !!then;
+    leaves.forEach((l, i) => { if (l.t !== 0) setTimeout(() => { l.t = 0; }, (leaves.length - 1 - i) * (swap ? 40 : 120)); });
+    closeFast = swap;
     closing = () => {
       fly.t = 0;
       const wait = () => {
         if (fly.x > .04 && !still) { requestAnimationFrame(wait); return; }
         book.hidden = true; controls.hidden = true; table.classList.remove('has-book');
-        currentSpine?.classList.remove('out'); spines.forEach((s) => s.setAttribute('aria-selected', 'false'));
-        current = null; currentSpine = null;
+        bookcase.querySelector(`.spine[data-id="${CSS.escape(current!)}"]`)?.classList.remove('out');
+        current = null;
         then?.();
       };
       wait();
     };
   }
 
-  // turning: the top page on the right goes left, or the top page on the left comes back
   const topRight = () => leaves.findIndex((l) => l.t === 0);
   const topLeft = () => { for (let i = leaves.length - 1; i >= 0; i--) if (leaves[i].t === -180) return i; return -1; };
   function turnNext() { const i = topRight(); if (i >= 0) { leaves[i].t = -180; play('page'); } }
   function turnBack() { const i = topLeft(); if (i >= 0) { leaves[i].t = 0; play('page'); } }
-
-  spines.forEach((s, i) => {
-    s.addEventListener('click', () => pull(s));
-    s.addEventListener('keydown', (e) => {
-      const k = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
-      if (k) { e.preventDefault(); spines[(i + k + spines.length) % spines.length].focus(); }
-    });
-  });
   nextBtn.addEventListener('click', turnNext);
   prevBtn.addEventListener('click', turnBack);
-  document.getElementById('putback')!.addEventListener('click', () => putBack());
+  $('putback').addEventListener('click', () => putBack());
   book.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowRight') turnNext();
     if (e.key === 'ArrowLeft') turnBack();
     if (e.key === 'Escape') putBack();
   });
 
-  // drag a page by its edge: the page follows your finger and keeps its momentum when you let go
+  // drag a page by its edge: it follows your finger and keeps its momentum when you let go
   let drag: { i: number; startX: number; lastA: number; lastT: number; vel: number; moved: boolean } | null = null;
   const spineX = () => { const r = book.getBoundingClientRect(); return r.left + r.width / 2; };
   book.addEventListener('pointerdown', (e) => {
     if (fly.x < .9) return;
-    const right = e.clientX > spineX();
-    const i = right ? topRight() : topLeft();
+    const i = e.clientX > spineX() ? topRight() : topLeft();
     if (i < 0) return;
     drag = { i, startX: e.clientX, lastA: leaves[i].x, lastT: performance.now(), vel: 0, moved: false };
     leaves[i].held = true;
@@ -321,10 +414,8 @@ const statusText = { read: 'Read', reading: 'Reading now', quit: 'Put down, unfi
     if (!drag) return;
     if (Math.abs(e.clientX - drag.startX) > 5) drag.moved = true;
     if (!drag.moved) return;
-    const P = book.offsetWidth / 2;
-    const rel = Math.max(-1, Math.min(1, (e.clientX - spineX()) / P));
-    const a = -Math.acos(rel) * 180 / Math.PI;
-    const now = performance.now(), dt = Math.max(.008, (now - drag.lastT) / 1000);
+    const rel = Math.max(-1, Math.min(1, (e.clientX - spineX()) / (book.offsetWidth / 2)));
+    const a = -Math.acos(rel) * 180 / Math.PI, now = performance.now(), dt = Math.max(.008, (now - drag.lastT) / 1000);
     drag.vel = drag.vel * .5 + ((a - drag.lastA) / dt) * .5;
     drag.lastA = a; drag.lastT = now;
     leaves[drag.i].x = a; leaves[drag.i].v = 0;
@@ -333,9 +424,8 @@ const statusText = { read: 'Read', reading: 'Reading now', quit: 'Put down, unfi
     if (!drag) return;
     const l = leaves[drag.i], wasLeft = l.t === -180;
     l.held = false;
-    if (!drag.moved) {
-      if (e.clientX > spineX()) turnNext(); else turnBack();
-    } else {
+    if (!drag.moved) { if (e.clientX > spineX()) turnNext(); else turnBack(); }
+    else {
       l.v = Math.max(-900, Math.min(900, drag.vel));
       l.t = drag.vel < -250 ? -180 : drag.vel > 250 ? 0 : (l.x < -90 ? -180 : 0);
       if ((l.t === -180) !== wasLeft) play('page');
@@ -345,12 +435,12 @@ const statusText = { read: 'Read', reading: 'Reading now', quit: 'Put down, unfi
   book.addEventListener('pointerup', release);
   book.addEventListener('pointercancel', release);
 
-  // ---------- Animation ----------
   let last = performance.now();
   function frame(now: number) {
     const dt = Math.min((now - last) / 1000, 1 / 30); last = now;
     if (current) {
-      fly.v += (60 * (fly.t - fly.x) - 12 * fly.v) * dt; fly.x += fly.v * dt;
+      const fk = closeFast && fly.t === 0 ? 160 : 60;
+      fly.v += (fk * (fly.t - fly.x) - Math.sqrt(fk) * 1.6 * fly.v) * dt; fly.x += fly.v * dt;
       if (still) fly.x = fly.t;
       if (!openedCover && fly.x > .9 && fly.t === 1) { openedCover = true; setTimeout(() => { if (current && leaves[0].t === 0) { leaves[0].t = -180; play('page'); } }, 250); }
       leaves.forEach((l) => {
@@ -358,23 +448,17 @@ const statusText = { read: 'Read', reading: 'Reading now', quit: 'Put down, unfi
         l.v += (110 * (l.t - l.x) - 13 * l.v) * dt; l.x += l.v * dt;
         if (still) { l.x = l.t; l.v = 0; }
       });
-      if (closing && leaves.every((l) => l.t === 0 && l.x > -3)) { const c = closing; closing = null; c(); }
-
-      const P = book.offsetWidth / 2;
-      const open = Math.min(1, Math.max(0, -leaves[0].x / 180));
-      const s = Math.max(0, fly.x), inv = 1 - Math.min(1, s);
-      const scale = from.scale + (1 - from.scale) * Math.min(1, s);
-      // the closed book is just its right half, so slide it left to keep it centred until it opens
-      const shift = -P / 2 * (1 - open);
-      book.style.transform = `translate(${from.dx * inv}px, ${from.dy * inv}px) translateX(${shift}px) rotateY(${-85 * inv}deg) rotateX(${12 * inv}deg) scale(${scale})`;
+      if (closing && leaves.every((l) => l.t === 0 && l.x > (closeFast ? -70 : -3))) { const c = closing; closing = null; c(); }
+      const P = book.offsetWidth / 2, open = Math.min(1, Math.max(0, -leaves[0].x / 180));
+      const s = Math.max(0, fly.x), inv = 1 - Math.min(1, s), scale = from.scale + (1 - from.scale) * Math.min(1, s);
+      book.style.transform = `translate(${from.dx * inv}px, ${from.dy * inv}px) translateX(${-P / 2 * (1 - open)}px) rotateY(${-85 * inv}deg) rotateX(${12 * inv}deg) scale(${scale})`;
       book.style.opacity = s * 3 >= 1 ? '' : String(Math.max(0, s * 3)); // opacity below 1 flattens 3D, so clear it once arrived
       book.style.setProperty('--open', String(open));
       leaves.forEach((l, i) => {
-        const el = leafEls[i], a = Math.max(-180, Math.min(0, l.x));
-        el.style.setProperty('--a', `${l.x}deg`);
-        el.style.setProperty('--shade', String(Math.sin(-a * Math.PI / 180) * .55));
-        // in 3D, stacking comes from depth: lift each page a hair toward the viewer on whichever side it lies
-        el.style.setProperty('--z', `${a > -90 ? (leaves.length - i) * .7 : -(i + 1) * .7}px`);
+        const e = leafEls[i], a = Math.max(-180, Math.min(0, l.x));
+        e.style.setProperty('--a', `${l.x}deg`);
+        e.style.setProperty('--shade', String(Math.sin(-a * Math.PI / 180) * .55));
+        e.style.setProperty('--z', `${a > -90 ? (leaves.length - i) * .7 : -(i + 1) * .7}px`); // in 3D, depth (not z-index) stacks the pages
       });
       prevBtn.disabled = topLeft() < 0; nextBtn.disabled = topRight() < 0;
     }
@@ -382,7 +466,10 @@ const statusText = { read: 'Read', reading: 'Reading now', quit: 'Put down, unfi
   }
   requestAnimationFrame(frame);
 
-  // arrive with the first book already off the shelf, so the room is alive at a glance
-  setTimeout(() => { if (!current && spines[0]) pull(spines[0], true); }, still ? 0 : 700);
-  void hint;
+  render();
+  // arrive with the book on the nightstand already open, so the room is alive at a glance
+  setTimeout(() => {
+    const first = D.books.find((b) => b.status === 'reading') ?? D.books[0];
+    if (!current && first) pull(first.id, bookcase.querySelector(`.spine[data-id="${CSS.escape(first.id)}"]`), true);
+  }, still ? 0 : 700);
 </script>

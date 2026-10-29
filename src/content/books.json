@@ -1,54 +1,1545 @@
 [
   {
-    "id": "sample-1",
-    "title": "Replace with a book you love",
-    "author": "Author name",
-    "status": "read",
-    "note": "One or two sentences on why it stayed with you. Edit src/content/books.json to add your own shelf.",
-    "line": "A favourite line from the book goes here.",
-    "thoughts": "Optional: a longer thought on the second spread. Add a \"thoughts\" field to any book in src/content/books.json."
+    "id": "build",
+    "title": "Build",
+    "author": "Tony Fadell",
+    "category": "Business & Entrepreneurship",
+    "status": "toread",
+    "about": "The iPod and Nest creator's mentor-style guide to building products, teams and a career."
   },
   {
-    "id": "sample-2",
-    "title": "The book on your nightstand",
-    "author": "Author name",
+    "id": "the-diary-of-a-ceo",
+    "title": "The Diary of a CEO",
+    "author": "Steven Bartlett",
+    "category": "Business & Entrepreneurship",
+    "status": "toread",
+    "about": "A candid account of building a business empire, distilling hard-won entrepreneurial and life lessons."
+  },
+  {
+    "id": "the-intelligent-negotiator",
+    "title": "The Intelligent Negotiator",
+    "author": "Charles Craver",
+    "category": "Business & Entrepreneurship",
+    "status": "toread",
+    "about": "A law professor's guide to negotiation strategy, covering preparation, tactics, and closing deals effectively."
+  },
+  {
+    "id": "mba-in-a-day",
+    "title": "MBA in a Day",
+    "author": "Steven Stralser",
+    "category": "Business & Entrepreneurship",
+    "status": "toread",
+    "about": "Distills the essential concepts of a business school education into a single accessible volume."
+  },
+  {
+    "id": "no-rules-rules",
+    "title": "No Rules Rules",
+    "author": "Reed Hastings & Erin Meyer",
+    "category": "Business & Entrepreneurship",
+    "status": "toread",
+    "about": "An insider account of how Netflix built a culture of radical freedom and responsibility that drives innovation."
+  },
+  {
+    "id": "the-bootstrappers-bible",
+    "title": "The Bootstrapper's Bible",
+    "author": "Seth Godin",
+    "category": "Business & Entrepreneurship",
+    "status": "toread",
+    "about": "A practical manifesto for building a business without outside funding, focusing on grit and resourcefulness."
+  },
+  {
+    "id": "high-growth-handbook",
+    "title": "High Growth Handbook",
+    "author": "Elad Gil",
+    "category": "Business & Entrepreneurship",
+    "status": "toread",
+    "about": "A practical guide for scaling startups from 10 to 10,000 employees, with advice from Silicon Valley leaders."
+  },
+  {
+    "id": "the-hard-thing-about-hard-things",
+    "title": "The Hard Thing About Hard Things",
+    "author": "Ben Horowitz",
+    "category": "Business & Entrepreneurship",
+    "status": "toread",
+    "about": "Raw, unfiltered advice on building and running a startup through the chaos and difficulty no one warns you about."
+  },
+  {
+    "id": "working-backwards",
+    "title": "Working Backwards",
+    "author": "Colin Bryar & Bill Carr",
+    "category": "Business & Entrepreneurship",
+    "status": "toread",
+    "about": "Former Amazon executives explain the company's distinctive management and product development philosophy."
+  },
+  {
+    "id": "the-startup-way",
+    "title": "The Startup Way",
+    "author": "Eric Ries",
+    "category": "Business & Entrepreneurship",
+    "status": "toread",
+    "about": "Ries extends Lean Startup principles to large organizations, showing how entrepreneurial management drives transformation."
+  },
+  {
+    "id": "the-dip",
+    "title": "The Dip",
+    "author": "Seth Godin",
+    "category": "Business & Entrepreneurship",
+    "status": "toread",
+    "about": "A short manifesto arguing that knowing when to quit — and when to persevere — is the key to success."
+  },
+  {
+    "id": "good-to-great",
+    "title": "Good to Great",
+    "author": "Jim Collins",
+    "category": "Business & Entrepreneurship",
+    "status": "toread",
+    "about": "Collins' research team identified what separates merely good companies from those that achieve lasting greatness."
+  },
+  {
+    "id": "startup-growth-engines",
+    "title": "Startup Growth Engines",
+    "author": "Sean Ellis & Morgan Brown",
+    "category": "Business & Entrepreneurship",
+    "status": "toread",
+    "about": "Case studies of how today's most successful startups — from Dropbox to LinkedIn — cracked the growth code."
+  },
+  {
+    "id": "understanding-michael-porter",
+    "title": "Understanding Michael Porter",
+    "author": "Joan Magretta",
+    "category": "Business & Entrepreneurship",
+    "status": "toread",
+    "about": "A concise guide explaining Michael Porter's revolutionary business frameworks on competition and strategy."
+  },
+  {
+    "id": "where-good-ideas-come-from",
+    "title": "Where Good Ideas Come From",
+    "author": "Steven Johnson",
+    "category": "Creativity & Art",
+    "status": "toread",
+    "about": "Explores seven recurring patterns in the history of innovation, from the printing press to the internet."
+  },
+  {
+    "id": "its-not-how-good-you-are-its-how-good-you-want-to-be",
+    "title": "It's Not How Good You Are, It's How Good You Want to Be",
+    "author": "Paul Arden",
+    "category": "Creativity & Art",
+    "status": "toread",
+    "about": "A pocket-sized manifesto from a legendary ad man on ambition, creativity, and achieving the impossible."
+  },
+  {
+    "id": "creative-confidence",
+    "title": "Creative Confidence",
+    "author": "Tom & David Kelley",
+    "category": "Creativity & Art",
+    "status": "toread",
+    "about": "IDEO's founders show how anyone can unlock their creative potential by overcoming fear and embracing experimentation."
+  },
+  {
+    "id": "creativity-inc",
+    "title": "Creativity, Inc.",
+    "author": "Ed Catmull",
+    "category": "Creativity & Art",
+    "status": "toread",
+    "about": "The Pixar co-founder's behind-the-scenes account of building a studio that produces consistent creative excellence."
+  },
+  {
+    "id": "the-creative-act",
+    "title": "The Creative Act",
+    "author": "Rick Rubin",
+    "category": "Creativity & Art",
+    "status": "toread",
+    "about": "Legendary music producer distills a lifetime of creative insight into a philosophical guide for any artist."
+  },
+  {
+    "id": "the-design-of-everyday-things",
+    "title": "The Design of Everyday Things",
+    "author": "Don Norman",
+    "category": "Creativity & Art",
+    "status": "toread",
+    "about": "The foundational text of UX design, showing how good design communicates and bad design frustrates."
+  },
+  {
+    "id": "daily-rituals-how-artists-work",
+    "title": "Daily Rituals: How Artists Work",
+    "author": "Mason Currey",
+    "category": "Creativity & Art",
+    "status": "toread",
+    "about": "Portraits of the daily habits and routines of 161 painters, writers, composers, and thinkers."
+  },
+  {
+    "id": "sum-forty-tales-from-the-after-life",
+    "title": "Sum: Forty Tales from the After Life",
+    "author": "David Eagleman",
+    "category": "Fiction & Literature",
+    "status": "toread",
+    "about": "A collection of forty short stories that imagine different, unexpected scenarios of the afterlife to explore the human condition and the nature of existence."
+  },
+  {
+    "id": "no-great-mischief",
+    "title": "No Great Mischief",
+    "author": "Alistair MacLeod",
+    "category": "Fiction & Literature",
+    "status": "toread",
+    "about": "A family saga that follows generations of a Scottish Highland clan settled on Cape Breton Island, and the bonds of blood and memory between them."
+  },
+  {
+    "id": "forty-rules-of-love",
+    "title": "Forty Rules of Love",
+    "author": "Elif Shafak",
+    "category": "Fiction & Literature",
+    "status": "toread",
+    "about": "A novel interweaving a modern love story with the mystical teachings of Rumi and his companion Shams of Tabriz."
+  },
+  {
+    "id": "origin",
+    "title": "Origin",
+    "author": "Dan Brown",
+    "category": "Fiction & Literature",
+    "status": "toread",
+    "about": "A Robert Langdon thriller exploring science versus religion, set in Spain's most spectacular architectural wonders."
+  },
+  {
+    "id": "midnight-library",
+    "title": "Midnight Library",
+    "author": "Matt Haig",
+    "category": "Fiction & Literature",
+    "status": "toread",
+    "about": "A novel about a woman who finds a library between life and death, where each book is a life she could have lived."
+  },
+  {
+    "id": "the-hitchhikers-guide-to-the-galaxy",
+    "title": "The Hitchhiker's Guide to the Galaxy",
+    "author": "Douglas Adams",
+    "category": "Fiction & Literature",
+    "status": "toread",
+    "about": "A comedic sci-fi classic following an ordinary man swept across the absurd universe after Earth's demolition."
+  },
+  {
+    "id": "1q84",
+    "title": "1Q84",
+    "author": "Haruki Murakami",
+    "category": "Fiction & Literature",
+    "status": "toread",
+    "about": "A labyrinthine novel set in an alternate 1984 Tokyo, weaving two parallel storylines about fate and reality."
+  },
+  {
+    "id": "sphere",
+    "title": "Sphere",
+    "author": "Michael Crichton",
+    "category": "Fiction & Literature",
+    "status": "toread",
+    "about": "A sci-fi thriller about a team of scientists who discover a mysterious spacecraft on the Pacific ocean floor."
+  },
+  {
+    "id": "the-brief-wondrous-life-of-oscar-wao",
+    "title": "The Brief Wondrous Life of Oscar Wao",
+    "author": "Junot Díaz",
+    "category": "Fiction & Literature",
+    "status": "toread",
+    "about": "A Pulitzer Prize-winning novel about a Dominican-American nerd navigating family trauma, love, and identity."
+  },
+  {
+    "id": "great-expectations",
+    "title": "Great Expectations",
+    "author": "Charles Dickens",
+    "category": "Fiction & Literature",
+    "status": "toread",
+    "about": "A coming-of-age classic following Pip from humble origins to London society, exploring class, identity, and ambition."
+  },
+  {
+    "id": "the-little-prince",
+    "title": "The Little Prince",
+    "author": "Antoine de Saint-Exupéry",
+    "category": "Fiction & Literature",
+    "status": "toread",
+    "about": "A beloved fable about a young prince exploring the universe, offering timeless wisdom about love and human nature."
+  },
+  {
+    "id": "catch-22",
+    "title": "Catch-22",
+    "author": "Joseph Heller",
+    "category": "Fiction & Literature",
+    "status": "toread",
+    "about": "A darkly comic World War II novel exposing the absurdity of bureaucracy and the insanity of war."
+  },
+  {
+    "id": "war-and-peace",
+    "title": "War and Peace",
+    "author": "Leo Tolstoy",
+    "category": "Fiction & Literature",
+    "status": "toread",
+    "about": "Tolstoy's monumental epic following Russian families through Napoleon's invasion, exploring history, fate, and human nature."
+  },
+  {
+    "id": "jane-eyre",
+    "title": "Jane Eyre",
+    "author": "Charlotte Brontë",
+    "category": "Fiction & Literature",
+    "status": "toread",
+    "about": "A Gothic Victorian novel about an orphan's journey to selfhood, love, and moral courage against social constraint."
+  },
+  {
+    "id": "the-catcher-in-the-rye",
+    "title": "The Catcher in the Rye",
+    "author": "J.D. Salinger",
+    "category": "Fiction & Literature",
+    "status": "toread",
+    "about": "Holden Caulfield's iconic first-person account of adolescent alienation, loss, and the pain of growing up."
+  },
+  {
+    "id": "crime-and-punishment",
+    "title": "Crime and Punishment",
+    "author": "Fyodor Dostoevsky",
+    "category": "Fiction & Literature",
+    "status": "toread",
+    "about": "A psychological novel exploring a young man's descent after committing murder, and his journey toward redemption."
+  },
+  {
+    "id": "ulysses",
+    "title": "Ulysses",
+    "author": "James Joyce",
+    "category": "Fiction & Literature",
+    "status": "toread",
+    "about": "A stream-of-consciousness tour de force following Leopold Bloom through a single day in Dublin — a literary landmark."
+  },
+  {
+    "id": "the-paper-menagerie",
+    "title": "The Paper Menagerie",
+    "author": "Ken Liu",
+    "category": "Fiction & Literature",
+    "status": "toread",
+    "about": "An award-winning collection of science fiction and fantasy stories exploring identity, memory, and belonging."
+  },
+  {
+    "id": "poor-charlies-almanack",
+    "title": "Poor Charlie's Almanack",
+    "author": "Charlie Munger",
+    "category": "Investing & Finance",
+    "status": "toread",
+    "about": "A collection of Munger's speeches and wit, distilling a multidisciplinary approach to thinking and investing."
+  },
+  {
+    "id": "tap-dancing-to-work",
+    "title": "Tap Dancing to Work",
+    "author": "Carol Loomis",
+    "category": "Investing & Finance",
+    "status": "toread",
+    "about": "A curated anthology of Fortune magazine's best writing on Warren Buffett spanning four decades."
+  },
+  {
+    "id": "the-richest-man-in-babylon",
+    "title": "The Richest Man in Babylon",
+    "author": "George Clason",
+    "category": "Investing & Finance",
+    "status": "toread",
+    "about": "Ancient Babylonian parables delivering timeless personal finance wisdom on saving, investing, and wealth."
+  },
+  {
+    "id": "the-intelligent-investor",
+    "title": "The Intelligent Investor",
+    "author": "Benjamin Graham",
+    "category": "Investing & Finance",
+    "status": "toread",
+    "about": "The definitive book on value investing, teaching how to think about markets and protect against serious mistakes."
+  },
+  {
+    "id": "the-little-book-of-common-sense-investing",
+    "title": "The Little Book of Common Sense Investing",
+    "author": "John C. Bogle",
+    "category": "Investing & Finance",
+    "status": "toread",
+    "about": "Vanguard's founder makes the definitive case for low-cost index fund investing over active stock-picking."
+  },
+  {
+    "id": "speak-like-a-ceo",
+    "title": "Speak Like a CEO",
+    "author": "Suzanne Bates",
+    "category": "Leadership & Management",
+    "status": "toread",
+    "about": "A communications coach's framework for projecting authority, authenticity, and presence as a leader."
+  },
+  {
+    "id": "extreme-ownership",
+    "title": "Extreme Ownership",
+    "author": "Jocko Willink & Leif Babin",
+    "category": "Leadership & Management",
+    "status": "toread",
+    "about": "Navy SEAL commanders apply battlefield leadership principles to business, centering on radical accountability."
+  },
+  {
+    "id": "what-got-you-here-wont-get-you-there",
+    "title": "What Got You Here Won't Get You There",
+    "author": "Marshall Goldsmith",
+    "category": "Leadership & Management",
     "status": "reading",
-    "note": "Books marked \"reading\" get a ribbon on their spine.",
-    "line": "Lines you underline go on the left page of the second spread."
+    "about": "An executive coach identifies the subtle habits holding successful people back from reaching the next level."
   },
   {
-    "id": "sample-3",
-    "title": "A book that changed your mind",
-    "author": "Author name",
+    "id": "the-art-of-action",
+    "title": "The Art of Action",
+    "author": "Stephen Bungay",
+    "category": "Leadership & Management",
+    "status": "toread",
+    "about": "Draws on Prussian military strategy to offer a new model for aligning strategy and execution in organizations."
+  },
+  {
+    "id": "the-culture-map",
+    "title": "The Culture Map",
+    "author": "Erin Meyer",
+    "category": "Leadership & Management",
+    "status": "toread",
+    "about": "A guide to understanding and bridging cultural differences in global business communication and leadership."
+  },
+  {
+    "id": "the-effective-executive",
+    "title": "The Effective Executive",
+    "author": "Peter Drucker",
+    "category": "Leadership & Management",
+    "status": "toread",
+    "about": "Drucker's timeless manual on executive effectiveness, focusing on time management, contribution, and decision-making."
+  },
+  {
+    "id": "the-great-ceo-within",
+    "title": "The Great CEO Within",
+    "author": "Matt Mochary",
+    "category": "Leadership & Management",
+    "status": "toread",
+    "about": "A practical handbook for startup CEOs covering decision-making, team management, and personal effectiveness."
+  },
+  {
+    "id": "play-like-a-man-win-like-a-woman",
+    "title": "Play Like a Man, Win Like a Woman",
+    "author": "Gail Evans",
+    "category": "Leadership & Management",
+    "status": "toread",
+    "about": "CNN executive reveals the unwritten rules of corporate success that men know and women need to learn."
+  },
+  {
+    "id": "unleashing-the-ideavirus",
+    "title": "Unleashing the Ideavirus",
+    "author": "Seth Godin",
+    "category": "Marketing & Persuasion",
+    "status": "toread",
+    "about": "A manifesto arguing that in the digital age, ideas that spread win — and how to engineer that spread."
+  },
+  {
+    "id": "persuasion-iq",
+    "title": "Persuasion IQ",
+    "author": "Kurt Mortensen",
+    "category": "Marketing & Persuasion",
+    "status": "toread",
+    "about": "A framework for developing the mindset and skills of the world's most persuasive communicators."
+  },
+  {
+    "id": "influence-the-psychology-of-persuasion",
+    "title": "Influence: The Psychology of Persuasion",
+    "author": "Robert Cialdini",
+    "category": "Marketing & Persuasion",
+    "status": "toread",
+    "about": "Cialdini identifies six universal principles of persuasion and how to apply and defend against them."
+  },
+  {
+    "id": "the-22-immutable-laws-of-marketing",
+    "title": "The 22 Immutable Laws of Marketing",
+    "author": "Al Ries & Jack Trout",
+    "category": "Marketing & Persuasion",
+    "status": "toread",
+    "about": "Twenty-two fundamental truths about marketing that, if violated, will doom any brand or product to failure."
+  },
+  {
+    "id": "building-a-storybrand",
+    "title": "Building a StoryBrand",
+    "author": "Donald Miller",
+    "category": "Marketing & Persuasion",
+    "status": "toread",
+    "about": "A seven-part framework that helps brands clarify their message so customers will listen."
+  },
+  {
+    "id": "small-is-the-new-big",
+    "title": "Small is the New Big",
+    "author": "Seth Godin",
+    "category": "Marketing & Persuasion",
+    "status": "toread",
+    "about": "A collection of essays and provocations about marketing, ideas, and what it means to do remarkable work."
+  },
+  {
+    "id": "a-philosophical-essay-on-probabilities",
+    "title": "A Philosophical Essay on Probabilities",
+    "author": "Pierre-Simon Laplace",
+    "category": "Math & Logic",
+    "status": "toread",
+    "about": "A 19th-century classic laying the philosophical foundations of probability theory and statistical reasoning."
+  },
+  {
+    "id": "how-to-lie-with-statistics",
+    "title": "How to Lie with Statistics",
+    "author": "Darrell Huff",
+    "category": "Math & Logic",
+    "status": "toread",
+    "about": "A classic guide to recognizing statistical tricks and distortions used to mislead in media and advertising."
+  },
+  {
+    "id": "the-art-and-craft-of-problem-solving",
+    "title": "The Art and Craft of Problem Solving",
+    "author": "Paul Zeitz",
+    "category": "Math & Logic",
+    "status": "toread",
+    "about": "A deep guide to mathematical problem-solving techniques for competitions and beyond, emphasizing elegant thinking."
+  },
+  {
+    "id": "induction-and-analogy-in-mathematics",
+    "title": "Induction and Analogy in Mathematics",
+    "author": "George Pólya",
+    "category": "Math & Logic",
+    "status": "toread",
+    "about": "Pólya's classic on mathematical discovery and the patterns of plausible reasoning."
+  },
+  {
+    "id": "all-the-math-you-need-to-get-rich",
+    "title": "All the Math You Need to Get Rich",
+    "author": "Robert Hershey",
+    "category": "Math & Logic",
+    "status": "toread",
+    "about": "A non-technical guide to the mathematical concepts that underlie smart financial decision-making."
+  },
+  {
+    "id": "notebooks-1951-1959",
+    "title": "Notebooks: 1951-1959",
+    "author": "Albert Camus",
+    "category": "Memoir & Biography",
+    "status": "toread",
+    "about": "The final journals of the French writer and philosopher, offering an intimate glimpse into his creative mind, personal reflections, and philosophical struggles during the last nine years of his life."
+  },
+  {
+    "id": "all-rivers-run-to-the-sea",
+    "title": "All Rivers Run to the Sea",
+    "author": "Elie Wiesel",
+    "category": "Memoir & Biography",
+    "status": "toread",
+    "about": "The first volume of Wiesel's memoir, from his childhood in Romania through surviving the Holocaust."
+  },
+  {
+    "id": "the-lonely-city",
+    "title": "The Lonely City",
+    "author": "Olivia Laing",
+    "category": "Memoir & Biography",
+    "status": "toread",
+    "about": "A cultural meditation on loneliness through the lives and art of figures like Hopper, Warhol, and Wojnarowicz."
+  },
+  {
+    "id": "eat-pray-love",
+    "title": "Eat, Pray, Love",
+    "author": "Elizabeth Gilbert",
+    "category": "Memoir & Biography",
+    "status": "toread",
+    "about": "A memoir of one woman's journey across Italy, India, and Indonesia after a painful divorce, seeking herself."
+  },
+  {
+    "id": "yesterday-i-cried",
+    "title": "Yesterday, I Cried",
+    "author": "Iyanla Vanzant",
+    "category": "Memoir & Biography",
+    "status": "toread",
+    "about": "A memoir of healing through which the author confronts childhood trauma, grief, and shame to reclaim her life."
+  },
+  {
+    "id": "becoming-steve-jobs",
+    "title": "Becoming Steve Jobs",
+    "author": "Brent Schlender & Rick Tetzeli",
+    "category": "Memoir & Biography",
+    "status": "toread",
+    "about": "A more nuanced biography of Jobs, emphasizing his growth as a leader and human being."
+  },
+  {
+    "id": "michael-jordan-the-life",
+    "title": "Michael Jordan: The Life",
+    "author": "Roland Lazenby",
+    "category": "Memoir & Biography",
+    "status": "toread",
+    "about": "The definitive biography of Michael Jordan, drawing on hundreds of interviews to reveal the man behind the myth."
+  },
+  {
+    "id": "the-time-we-have",
+    "title": "The Time We Have",
+    "author": "Aastha Mathur",
+    "category": "Memoir & Biography",
+    "status": "toread",
+    "about": "A reflective memoir on time, loss, and the things that matter, written with quiet emotional depth."
+  },
+  {
+    "id": "books-by-jesse-itzler",
+    "title": "Books by Jesse Itzler",
+    "author": "Jesse Itzler",
+    "category": "Memoir & Biography",
+    "status": "toread",
+    "about": "Itzler's memoirs blend humor and extreme self-improvement, covering adventures with Navy SEALs and ultra-athletes."
+  },
+  {
+    "id": "switch",
+    "title": "Switch",
+    "author": "Chip Heath & Dan Heath",
+    "category": "Mindset & Self-Help",
+    "status": "toread",
+    "about": "Explores how to effect lasting personal and organizational change by aligning the rational mind, the emotional mind, and the environment."
+  },
+  {
+    "id": "mastery",
+    "title": "Mastery",
+    "author": "Robert Greene",
+    "category": "Mindset & Self-Help",
+    "status": "next",
+    "about": "Examines how history's greatest masters achieved extraordinary skill through deep practice and dedicated apprenticeships."
+  },
+  {
+    "id": "psycho-cybernetics",
+    "title": "Psycho-Cybernetics",
+    "author": "Maxwell Maltz",
+    "category": "Mindset & Self-Help",
+    "status": "toread",
+    "about": "A pioneering self-image psychology framework showing how changing your mental picture of yourself changes your life."
+  },
+  {
+    "id": "unbeatable-mind",
+    "title": "Unbeatable Mind",
+    "author": "Mark Divine",
+    "category": "Mindset & Self-Help",
+    "status": "toread",
+    "about": "Navy SEAL-derived mental training practices for developing elite focus, resilience, and performance under pressure."
+  },
+  {
+    "id": "do-more-great-work",
+    "title": "Do More Great Work",
+    "author": "Seth Godin",
+    "category": "Mindset & Self-Help",
+    "status": "toread",
+    "about": "A practical workbook using visual exercises to help readers identify and pursue work that truly matters."
+  },
+  {
+    "id": "see-you-at-the-top",
+    "title": "See You at the Top",
+    "author": "Zig Ziglar",
+    "category": "Mindset & Self-Help",
+    "status": "toread",
+    "about": "A motivational classic teaching that success flows from attitude, integrity, and a clear personal vision."
+  },
+  {
+    "id": "modern-manners",
+    "title": "Modern Manners",
+    "author": "Dorothea Johnson",
+    "category": "Mindset & Self-Help",
+    "status": "toread",
+    "about": "An authoritative guide to etiquette in professional and social settings for the contemporary world."
+  },
+  {
+    "id": "how-the-world-sees-you",
+    "title": "How the World Sees You",
+    "author": "Sally Hogshead",
+    "category": "Mindset & Self-Help",
+    "status": "toread",
+    "about": "A system for discovering your personality's most fascinating traits and using them as a competitive advantage."
+  },
+  {
+    "id": "the-one-thing",
+    "title": "The One Thing",
+    "author": "Gary Keller",
+    "category": "Mindset & Self-Help",
+    "status": "toread",
+    "about": "Argues that extraordinary results come from narrowing your focus to the single most important task at any moment."
+  },
+  {
+    "id": "the-10x-rule",
+    "title": "The 10x Rule",
+    "author": "Grant Cardone",
+    "category": "Mindset & Self-Help",
+    "status": "toread",
+    "about": "A manifesto for setting massive goals and taking ten times the action most people think is necessary."
+  },
+  {
+    "id": "relentless",
+    "title": "Relentless",
+    "author": "Tim S. Grover",
+    "category": "Mindset & Self-Help",
+    "status": "toread",
+    "about": "The trainer of Michael Jordan and Kobe Bryant reveals the mindset that separates the good from the unstoppable."
+  },
+  {
+    "id": "how-to-read-a-book",
+    "title": "How to Read a Book",
+    "author": "Mortimer Adler",
+    "category": "Mindset & Self-Help",
+    "status": "toread",
+    "about": "A classic guide to analytical reading, explaining how to extract the maximum value from any text."
+  },
+  {
+    "id": "the-master-key-system",
+    "title": "The Master Key System",
+    "author": "Charles Haanel",
+    "category": "Mindset & Self-Help",
+    "status": "toread",
+    "about": "An early 20th-century guide to harnessing mental power and the subconscious to achieve goals."
+  },
+  {
+    "id": "how-to-develop-a-super-power-memory",
+    "title": "How to Develop a Super-Power Memory",
+    "author": "Harry Lorayne",
+    "category": "Mindset & Self-Help",
+    "status": "toread",
+    "about": "Practical mnemonic techniques for dramatically improving recall of names, numbers, facts, and ideas."
+  },
+  {
+    "id": "tools-of-titans",
+    "title": "Tools of Titans",
+    "author": "Tim Ferriss",
+    "category": "Mindset & Self-Help",
+    "status": "toread",
+    "about": "A curated compendium of tactics, routines, and habits from over 200 world-class performers interviewed by Ferriss."
+  },
+  {
+    "id": "the-champions-mind",
+    "title": "The Champion's Mind",
+    "author": "Jim Afremow",
+    "category": "Mindset & Self-Help",
+    "status": "toread",
+    "about": "A sports psychologist's playbook for peak mental performance, used by elite athletes worldwide."
+  },
+  {
+    "id": "the-mindful-athlete",
+    "title": "The Mindful Athlete",
+    "author": "George Mumford",
+    "category": "Mindset & Self-Help",
+    "status": "toread",
+    "about": "Michael Jordan's mindfulness coach reveals how presence and awareness unlock elite athletic performance."
+  },
+  {
+    "id": "kaizen",
+    "title": "Kaizen",
+    "author": "Sarah Harvey",
+    "category": "Mindset & Self-Help",
+    "status": "toread",
+    "about": "Applies the Japanese philosophy of continuous small improvements to daily habits, health, and happiness."
+  },
+  {
+    "id": "peak",
+    "title": "Peak",
+    "author": "Anders Ericsson",
+    "category": "Mindset & Self-Help",
+    "status": "toread",
+    "about": "The originator of the 10,000-hours concept explains how deliberate practice actually works to build expertise."
+  },
+  {
+    "id": "range-why-generalists-triumph",
+    "title": "Range: Why Generalists Triumph",
+    "author": "David Epstein",
+    "category": "Mindset & Self-Help",
+    "status": "toread",
+    "about": "Challenges the 10,000-hours rule, arguing that breadth of experience often beats narrow specialization."
+  },
+  {
+    "id": "the-talent-code",
+    "title": "The Talent Code",
+    "author": "Daniel Coyle",
+    "category": "Mindset & Self-Help",
+    "status": "toread",
+    "about": "Investigates the science of skill development, revealing that talent is grown through targeted deep practice."
+  },
+  {
+    "id": "one-small-step-can-change-your-life",
+    "title": "One Small Step Can Change Your Life",
+    "author": "Robert Maurer",
+    "category": "Mindset & Self-Help",
+    "status": "toread",
+    "about": "Applies the Japanese kaizen philosophy of tiny steps to personal change, showing why small beats big."
+  },
+  {
+    "id": "all-tim-ferriss-books",
+    "title": "All Tim Ferriss Books",
+    "author": "Tim Ferriss",
+    "category": "Mindset & Self-Help",
+    "status": "toread",
+    "about": "A body of work covering lifestyle design, peak performance, and learning — including The 4-Hour Workweek series."
+  },
+  {
+    "id": "speed-reading-the-comprehensive-guide",
+    "title": "Speed Reading: The Comprehensive Guide",
+    "author": "—",
+    "category": "Mindset & Self-Help",
+    "status": "toread",
+    "about": "A practical system for dramatically increasing reading speed while maintaining or improving comprehension."
+  },
+  {
+    "id": "utopia-for-realists",
+    "title": "Utopia for Realists",
+    "author": "Rutger Bregman",
+    "category": "Philosophy",
+    "status": "toread",
+    "about": "A manifesto advocating for visionary ideas like universal basic income, a 15-hour workweek, and open borders to rebuild modern society."
+  },
+  {
+    "id": "shortness-of-life",
+    "title": "Shortness of Life",
+    "author": "Seneca",
+    "category": "Philosophy",
+    "status": "toread",
+    "about": "A Stoic essay arguing that life is not inherently short, but rather wasted through trivial preoccupations, ambition, and a lack of intentional living."
+  },
+  {
+    "id": "the-48-laws-of-power",
+    "title": "The 48 Laws of Power",
+    "author": "Robert Greene",
+    "category": "Philosophy",
+    "status": "toread",
+    "about": "A controversial exploration of power dynamics across history, presenting ruthless strategies used by leaders and schemers."
+  },
+  {
+    "id": "21-lessons-for-the-21st-century",
+    "title": "21 Lessons for the 21st Century",
+    "author": "Yuval Noah Harari",
+    "category": "Philosophy",
+    "status": "toread",
+    "about": "Harari tackles today's most pressing challenges — AI, politics, religion, and meaning — in a fragmented world."
+  },
+  {
+    "id": "the-obstacle-is-the-way",
+    "title": "The Obstacle Is the Way",
+    "author": "Ryan Holiday",
+    "category": "Philosophy",
+    "status": "toread",
+    "about": "Draws on Stoic philosophy to argue that adversity itself is the path to strength, using historical examples."
+  },
+  {
+    "id": "the-lessons-of-history",
+    "title": "The Lessons of History",
+    "author": "Will & Ariel Durant",
+    "category": "Philosophy",
+    "status": "toread",
+    "about": "A distillation of 5,000 years of human history into key patterns and lessons drawn from the Durants' life work."
+  },
+  {
+    "id": "every-time-i-find-the-meaning-of-life-they-change-it",
+    "title": "Every Time I Find the Meaning of Life, They Change It",
+    "author": "Daniel Klein",
+    "category": "Philosophy",
+    "status": "toread",
+    "about": "A philosopher reflects on a lifetime of reading great thinkers and distills witty, hard-won wisdom."
+  },
+  {
+    "id": "the-basic-laws-of-human-stupidity",
+    "title": "The Basic Laws of Human Stupidity",
+    "author": "Carlo Cipolla",
+    "category": "Philosophy",
+    "status": "toread",
+    "about": "A satirical yet incisive essay arguing that stupidity is the most dangerous force in human affairs."
+  },
+  {
+    "id": "the-story-of-philosophy",
+    "title": "The Story of Philosophy",
+    "author": "Will Durant",
+    "category": "Philosophy",
+    "status": "toread",
+    "about": "An accessible narrative of Western philosophy's greatest thinkers, from Plato to Dewey, and their ideas."
+  },
+  {
+    "id": "how-to-live",
+    "title": "How to Live",
+    "author": "Derek Sivers",
+    "category": "Philosophy",
+    "status": "toread",
+    "about": "A book of contradictory advice, exploring 27 radically different answers to the question of how to live well."
+  },
+  {
+    "id": "the-model-thinker",
+    "title": "The Model Thinker",
+    "author": "Scott E. Page",
+    "category": "Philosophy",
+    "status": "toread",
+    "about": "Teaches how to use dozens of mental models together to make sense of complex social and scientific phenomena."
+  },
+  {
+    "id": "meditations",
+    "title": "Meditations",
+    "author": "Marcus Aurelius",
+    "category": "Philosophy",
+    "status": "toread",
+    "about": "The private journal of a Roman emperor, offering Stoic reflections on duty, resilience, and the good life."
+  },
+  {
+    "id": "stubborn-attachments",
+    "title": "Stubborn Attachments",
+    "author": "Tyler Cowen",
+    "category": "Philosophy",
+    "status": "toread",
+    "about": "An economist argues that prioritizing long-run sustainable economic growth is the most ethical course for humanity."
+  },
+  {
+    "id": "rules-for-radicals",
+    "title": "Rules for Radicals",
+    "author": "Saul Alinsky",
+    "category": "Philosophy",
+    "status": "toread",
+    "about": "A pragmatic primer for community organizers on how to build power and create social change."
+  },
+  {
+    "id": "33-strategies-of-war",
+    "title": "33 Strategies of War",
+    "author": "Robert Greene",
+    "category": "Philosophy",
+    "status": "next",
+    "about": "Draws on history's greatest military conflicts to reveal strategies applicable to modern competitive situations."
+  },
+  {
+    "id": "the-prince",
+    "title": "The Prince",
+    "author": "Niccolò Machiavelli",
+    "category": "Philosophy",
+    "status": "toread",
+    "about": "A Renaissance-era treatise on political power, realpolitik, and leadership that remains controversial and essential."
+  },
+  {
+    "id": "astonish-yourself",
+    "title": "Astonish Yourself",
+    "author": "Roger-Pol Droit",
+    "category": "Philosophy",
+    "status": "toread",
+    "about": "101 philosophical micro-experiments to radically alter your perception of everyday experience."
+  },
+  {
+    "id": "how-to-be-idle",
+    "title": "How to Be Idle",
+    "author": "Tom Hodgkinson",
+    "category": "Philosophy",
+    "status": "toread",
+    "about": "A witty manifesto celebrating laziness as a radical act and the precondition for creativity and happiness."
+  },
+  {
+    "id": "the-willpower-instinct",
+    "title": "The Willpower Instinct",
+    "author": "Kelly McGonigal",
+    "category": "Psychology",
+    "status": "toread",
+    "about": "Stanford psychologist explains the science of self-control and offers practical strategies to strengthen willpower."
+  },
+  {
+    "id": "moonwalking-with-einstein",
+    "title": "Moonwalking with Einstein",
+    "author": "Joshua Foer",
+    "category": "Psychology",
+    "status": "toread",
+    "about": "A journalist trains for the US Memory Championship and uncovers the ancient art of memory palaces."
+  },
+  {
+    "id": "why-we-sleep",
+    "title": "Why We Sleep",
+    "author": "Matthew Walker",
+    "category": "Psychology",
+    "status": "toread",
+    "about": "A neuroscientist's urgent case for sleep, revealing its profound impact on health, creativity, and longevity."
+  },
+  {
+    "id": "what-you-can-change-what-you-cant",
+    "title": "What You Can Change & What You Can't",
+    "author": "Martin Seligman",
+    "category": "Psychology",
+    "status": "toread",
+    "about": "The founder of positive psychology examines what science says about changing habits, anxiety, and personality."
+  },
+  {
+    "id": "brainworks",
+    "title": "Brainworks",
+    "author": "Michael S. Sweeney",
+    "category": "Psychology",
+    "status": "toread",
+    "about": "An exploration of how the human brain processes information, makes decisions, and stores memories."
+  },
+  {
+    "id": "the-art-of-seduction",
+    "title": "The Art of Seduction",
+    "author": "Robert Greene",
+    "category": "Psychology",
+    "status": "toread",
+    "about": "A study of the psychology of desire and influence, cataloguing seductive archetypes and their strategies."
+  },
+  {
+    "id": "the-laws-of-human-nature",
+    "title": "The Laws of Human Nature",
+    "author": "Robert Greene",
+    "category": "Psychology",
+    "status": "toread",
+    "about": "A deep exploration of human behavior, drawing on history and psychology to understand and master social dynamics."
+  },
+  {
+    "id": "thinking-fast-and-slow",
+    "title": "Thinking, Fast and Slow",
+    "author": "Daniel Kahneman",
+    "category": "Psychology",
+    "status": "toread",
+    "about": "Nobel laureate explores the two systems of thought — intuitive and deliberate — that shape our judgments and choices."
+  },
+  {
+    "id": "flow-the-psychology-of-optimal-experience",
+    "title": "Flow: The Psychology of Optimal Experience",
+    "author": "Mihaly Csikszentmihalyi",
+    "category": "Psychology",
+    "status": "toread",
+    "about": "The definitive study of the mental state of complete immersion that is the source of true happiness."
+  },
+  {
+    "id": "stumbling-on-happiness",
+    "title": "Stumbling on Happiness",
+    "author": "Daniel Gilbert",
+    "category": "Psychology",
+    "status": "toread",
+    "about": "A Harvard psychologist reveals how poorly humans predict what will make them happy, and why."
+  },
+  {
+    "id": "boundaries",
+    "title": "Boundaries",
+    "author": "Henry Cloud & John Townsend",
+    "category": "Psychology",
+    "status": "toread",
+    "about": "A psychologically grounded guide to setting healthy limits in relationships for greater freedom and wholeness."
+  },
+  {
+    "id": "the-gifts-of-imperfection",
+    "title": "The Gifts of Imperfection",
+    "author": "Brené Brown",
+    "category": "Psychology",
+    "status": "toread",
+    "about": "A researcher's guide to letting go of who you think you should be and embracing who you are."
+  },
+  {
+    "id": "daring-greatly",
+    "title": "Daring Greatly",
+    "author": "Brené Brown",
+    "category": "Psychology",
+    "status": "toread",
+    "about": "Brown argues that vulnerability is not weakness but the birthplace of courage, creativity, and connection."
+  },
+  {
+    "id": "emotional-intelligence",
+    "title": "Emotional Intelligence",
+    "author": "Daniel Goleman",
+    "category": "Psychology",
+    "status": "toread",
+    "about": "The landmark book that introduced EQ to the mainstream, showing why it matters more than IQ for success."
+  },
+  {
+    "id": "women-who-think-too-much",
+    "title": "Women Who Think Too Much",
+    "author": "Susan Nolen-Hoeksema",
+    "category": "Psychology",
+    "status": "toread",
+    "about": "A psychologist examines the trap of overthinking and offers research-based strategies to break free."
+  },
+  {
+    "id": "luck-factor",
+    "title": "Luck Factor",
+    "author": "Richard Wiseman",
+    "category": "Psychology",
+    "status": "toread",
+    "about": "A psychologist's ten-year study revealing the four principles that lucky people use to generate good fortune."
+  },
+  {
+    "id": "positive-personality-profiles",
+    "title": "Positive Personality Profiles",
+    "author": "Robert Rohm",
+    "category": "Psychology",
+    "status": "toread",
+    "about": "An introduction to the DISC model of personality, helping readers understand themselves and others better."
+  },
+  {
+    "id": "dark-psychology-and-manipulation",
+    "title": "Dark Psychology and Manipulation",
+    "author": "—",
+    "category": "Psychology",
+    "status": "toread",
+    "about": "An examination of covert manipulation tactics, psychological influence, and how to recognize and defend against them."
+  },
+  {
+    "id": "drive-the-surprising-truth-about-what-motivates-us",
+    "title": "Drive: The Surprising Truth About What Motivates Us",
+    "author": "Daniel Pink",
+    "category": "Psychology",
+    "status": "toread",
+    "about": "Research shows that autonomy, mastery, and purpose are more powerful motivators than carrots and sticks."
+  },
+  {
+    "id": "games-people-play",
+    "title": "Games People Play",
+    "author": "Eric Berne",
+    "category": "Psychology",
+    "status": "toread",
+    "about": "The classic introduction to transactional analysis, revealing the unconscious games people play in relationships."
+  },
+  {
+    "id": "the-drama-of-the-gifted-child",
+    "title": "The Drama of the Gifted Child",
+    "author": "Alice Miller",
+    "category": "Psychology",
+    "status": "toread",
+    "about": "A psychoanalyst explores how sensitive children suppress their true selves to meet parents' emotional needs."
+  },
+  {
+    "id": "the-elephant-in-the-brain",
+    "title": "The Elephant in the Brain",
+    "author": "Robin Hanson & Kevin Simler",
+    "category": "Psychology",
+    "status": "toread",
+    "about": "Argues that most human behavior is driven by hidden self-interested motives we rarely acknowledge."
+  },
+  {
+    "id": "the-lucifer-effect",
+    "title": "The Lucifer Effect",
+    "author": "Philip Zimbardo",
+    "category": "Psychology",
+    "status": "toread",
+    "about": "The Stanford Prison Experiment creator examines how good people turn evil and the systemic forces behind atrocity."
+  },
+  {
+    "id": "the-psychopath-test",
+    "title": "The Psychopath Test",
+    "author": "Jon Ronson",
+    "category": "Psychology",
+    "status": "toread",
+    "about": "A journalist's investigation into the diagnosis and prevalence of psychopathy in society, from prisons to boardrooms."
+  },
+  {
+    "id": "the-body-keeps-the-score",
+    "title": "The Body Keeps the Score",
+    "author": "Bessel van der Kolk",
+    "category": "Psychology",
+    "status": "toread",
+    "about": "A psychiatrist reveals how trauma reshapes both mind and body, and the innovative therapies that can heal it."
+  },
+  {
+    "id": "why-mars-and-venus-collide",
+    "title": "Why Mars and Venus Collide",
+    "author": "John Gray",
+    "category": "Psychology",
+    "status": "toread",
+    "about": "Explores how evolutionary biology and brain chemistry drive the differences between men and women under stress."
+  },
+  {
+    "id": "be-who-you-want",
+    "title": "Be Who You Want",
+    "author": "Christian Jarrett",
+    "category": "Psychology",
+    "status": "toread",
+    "about": "A psychologist explains the science of personality change and how anyone can reshape their character."
+  },
+  {
+    "id": "clearer-closer-better",
+    "title": "Clearer, Closer, Better",
+    "author": "Emily Balcetis",
+    "category": "Psychology",
+    "status": "toread",
+    "about": "A vision scientist reveals how the way we literally see our goals shapes whether we achieve them."
+  },
+  {
+    "id": "cosmos",
+    "title": "Cosmos",
+    "author": "Carl Sagan",
+    "category": "Science & Cosmology",
+    "status": "next",
+    "about": "A sweeping journey through the universe's history, exploring astronomy, evolution, and humanity's place in the cosmos."
+  },
+  {
+    "id": "the-grand-design",
+    "title": "The Grand Design",
+    "author": "Stephen Hawking",
+    "category": "Science & Cosmology",
+    "status": "toread",
+    "about": "Hawking and Mlodinow argue that the universe's existence needs no creator, using M-theory to explain the cosmos."
+  },
+  {
+    "id": "the-universe-in-a-nutshell",
+    "title": "The Universe in a Nutshell",
+    "author": "Stephen Hawking",
+    "category": "Science & Cosmology",
+    "status": "toread",
+    "about": "An illustrated tour of modern physics, from quantum mechanics to M-theory, written for curious non-specialists."
+  },
+  {
+    "id": "a-brief-history-of-time",
+    "title": "A Brief History of Time",
+    "author": "Stephen Hawking",
+    "category": "Science & Cosmology",
+    "status": "toread",
+    "about": "Hawking's landmark popular science book explaining the universe's origins, black holes, and the nature of time."
+  },
+  {
+    "id": "a-beautiful-question",
+    "title": "A Beautiful Question",
+    "author": "Frank Wilczek",
+    "category": "Science & Cosmology",
+    "status": "toread",
+    "about": "A Nobel laureate physicist explores whether beauty — symmetry and elegance — is at the heart of nature's deep laws."
+  },
+  {
+    "id": "the-field",
+    "title": "The Field",
+    "author": "Lynne McTaggart",
+    "category": "Science & Cosmology",
+    "status": "toread",
+    "about": "Investigates cutting-edge science suggesting that a quantum energy field connects all living things."
+  },
+  {
+    "id": "wholeness-the-implicate-order",
+    "title": "Wholeness & the Implicate Order",
+    "author": "David Bohm",
+    "category": "Science & Cosmology",
+    "status": "toread",
+    "about": "The physicist proposes a radical theory of quantum reality in which the universe is a flowing, undivided whole."
+  },
+  {
+    "id": "way-to-love",
+    "title": "Way to Love",
+    "author": "Anthony de Mello",
+    "category": "Spirituality & Religion",
+    "status": "toread",
+    "about": "A collection of thirty-one spiritual meditations exploring how breaking through illusions and attachments can foster true love and awareness."
+  },
+  {
+    "id": "autobiography-of-a-yogi",
+    "title": "Autobiography of a Yogi",
+    "author": "Paramhansa Yogananda",
+    "category": "Spirituality & Religion",
+    "status": "next",
+    "about": "A spiritual classic chronicling a yogi's journey from India to the West, weaving together mysticism and science."
+  },
+  {
+    "id": "rumi-the-book-of-love",
+    "title": "Rumi: The Book of Love",
+    "author": "Coleman Barks",
+    "category": "Spirituality & Religion",
+    "status": "toread",
+    "about": "A collection of Rumi's most passionate poems on divine and human love, translated with soulful fluency."
+  },
+  {
+    "id": "the-top-10-things-dead-people-want-to-tell-you",
+    "title": "The Top 10 Things Dead People Want to Tell You",
+    "author": "Mike Dooley",
+    "category": "Spirituality & Religion",
+    "status": "toread",
+    "about": "A playful yet profound exploration of life's big questions, channeling wisdom that's easy to lose sight of."
+  },
+  {
+    "id": "the-essential-rumi",
+    "title": "The Essential Rumi",
+    "author": "Coleman Barks & John Moyne",
+    "category": "Spirituality & Religion",
+    "status": "toread",
+    "about": "The most celebrated English translation of Rumi's poetry, spanning ecstasy, longing, and divine union."
+  },
+  {
+    "id": "the-seat-of-the-soul",
+    "title": "The Seat of the Soul",
+    "author": "Gary Zukav",
+    "category": "Spirituality & Religion",
+    "status": "toread",
+    "about": "Explores the evolution of human consciousness and the spiritual dimensions of intention, karma, and authentic power."
+  },
+  {
+    "id": "soul-without-shame",
+    "title": "Soul Without Shame",
+    "author": "Byron Brown",
+    "category": "Spirituality & Religion",
+    "status": "toread",
+    "about": "A guide to freeing yourself from the inner critic, drawing on the Enneagram and Buddhist psychology."
+  },
+  {
+    "id": "a-religion-of-ones-own",
+    "title": "A Religion of One's Own",
+    "author": "Thomas Moore",
+    "category": "Spirituality & Religion",
+    "status": "toread",
+    "about": "Invites readers to build a personal spiritual life outside institutional religion, drawn from all traditions."
+  },
+  {
+    "id": "the-invitation",
+    "title": "The Invitation",
+    "author": "Oriah Mountain Dreamer",
+    "category": "Spirituality & Religion",
+    "status": "toread",
+    "about": "A prose poem and its expansion into a book about the depth of character and courage life requires of us."
+  },
+  {
+    "id": "making-the-modern-world",
+    "title": "Making the Modern World",
+    "author": "Vaclav Smil",
+    "category": "Technology & Future",
+    "status": "toread",
+    "about": "A data-rich account of how materials — iron, concrete, plastics — have shaped modern civilization."
+  },
+  {
+    "id": "the-art-of-doing-science-and-engineering",
+    "title": "The Art of Doing Science and Engineering",
+    "author": "Richard Hamming",
+    "category": "Technology & Future",
+    "status": "toread",
+    "about": "The legendary Bell Labs scientist shares lessons on how to do genuinely great technical and scientific work."
+  },
+  {
+    "id": "singularity-rising",
+    "title": "Singularity Rising",
+    "author": "James D. Miller",
+    "category": "Technology & Future",
+    "status": "toread",
+    "about": "Examines the potential trajectories of artificial superintelligence and their implications for humanity's future."
+  },
+  {
+    "id": "the-case-for-mars",
+    "title": "The Case for Mars",
+    "author": "Robert Zubrin",
+    "category": "Technology & Future",
+    "status": "toread",
+    "about": "An aerospace engineer lays out a detailed, affordable plan for sending humans to Mars within a decade."
+  },
+  {
+    "id": "the-dream-machine",
+    "title": "The Dream Machine",
+    "author": "M. Mitchell Waldrop",
+    "category": "Technology & Future",
+    "status": "toread",
+    "about": "The biography of J.C.R. Licklider, the visionary who conceived ideas that led to the personal computer and internet."
+  },
+  {
+    "id": "the-idea-factory",
+    "title": "The Idea Factory",
+    "author": "Jon Gertner",
+    "category": "Technology & Future",
+    "status": "toread",
+    "about": "The history of Bell Labs and how it became the most innovative research laboratory in history."
+  },
+  {
+    "id": "information-foraging-theory",
+    "title": "Information Foraging Theory",
+    "author": "Peter Pirolli",
+    "category": "Technology & Future",
+    "status": "toread",
+    "about": "Applies optimal foraging theory from biology to understand how human users search for information in user interfaces."
+  },
+  {
+    "id": "the-scaling-era",
+    "title": "The Scaling Era",
+    "author": "Dwarkesh Patel",
+    "category": "Technology & Future",
+    "status": "toread",
+    "about": "An exploration of the era of scaling laws in AI, examining what it means for technology and society."
+  },
+  {
+    "id": "this-will-change-everything",
+    "title": "This Will Change Everything",
+    "author": "John Brockman (ed.)",
+    "category": "Technology & Future",
+    "status": "toread",
+    "about": "Leading scientists and thinkers answer: what scientific idea, when widely understood, will change everything?"
+  },
+  {
+    "id": "how-to-win-at-the-sport-of-business",
+    "title": "How to Win at the Sport of Business",
+    "author": "Mark Cuban",
+    "category": "Business & Entrepreneurship",
+    "about": "Mark Cuban's short, blunt account of how he built his businesses, and the hustle he believes it takes.",
+    "status": "read"
+  },
+  {
+    "id": "healing-your-emotional-self",
+    "title": "Healing Your Emotional Self",
+    "author": "Beverly Engel",
+    "category": "Psychology",
+    "about": "A guide to healing the low self-esteem and harsh inner critic left by emotionally neglectful or abusive parenting.",
+    "status": "read"
+  },
+  {
+    "id": "adult-children-of-emotionally-immature-parents",
+    "title": "Adult Children of Emotionally Immature Parents",
+    "author": "Lindsay Gibson",
+    "category": "Psychology",
+    "about": "How to recognise emotionally immature parents, understand the mark they leave, and step out of old patterns.",
+    "status": "read"
+  },
+  {
+    "id": "cold-hard-truth",
+    "title": "Cold, Hard Truth",
+    "author": "Kevin O’Leary",
+    "category": "Business & Entrepreneurship",
+    "about": "The Shark Tank investor's no-nonsense lessons on business, money and life.",
+    "status": "read"
+  },
+  {
+    "id": "how-to-win-friends-and-influence-people",
+    "title": "How to Win Friends and Influence People",
+    "author": "Dale Carnegie",
+    "category": "Marketing & Persuasion",
+    "about": "The 1936 classic on getting along with people, winning them to your way of thinking, and leading without resentment.",
+    "status": "read"
+  },
+  {
+    "id": "the-power-of-your-subconscious-mind",
+    "title": "The Power of Your Subconscious Mind",
+    "author": "Joseph Murphy",
+    "category": "Mindset & Self-Help",
+    "about": "A classic on how belief and the subconscious mind shape health, wealth and relationships.",
+    "status": "read"
+  },
+  {
+    "id": "the-secret",
+    "title": "The Secret",
+    "author": "Rhonda Byrne",
+    "category": "Spirituality & Religion",
+    "about": "The bestselling introduction to the law of attraction: the idea that your thoughts shape what comes into your life.",
+    "status": "read"
+  },
+  {
+    "id": "the-power-of-intention",
+    "title": "The Power of Intention",
+    "author": "Wayne Dyer",
+    "category": "Spirituality & Religion",
+    "about": "Dyer describes intention as a field of energy you can align with to create the life you want.",
+    "status": "read"
+  },
+  {
+    "id": "what-to-say-when-you-talk-to-yourself",
+    "title": "What to Say When You Talk to Yourself",
+    "author": "Shad Helmstetter",
+    "category": "Mindset & Self-Help",
+    "about": "How self-talk programs the mind, and how to rewrite it on purpose.",
+    "status": "read"
+  },
+  {
+    "id": "the-alchemist",
+    "title": "The Alchemist",
+    "author": "Paulo Coelho",
+    "category": "Fiction & Literature",
+    "about": "A shepherd boy follows a recurring dream across the desert in search of treasure, and of his own Personal Legend.",
+    "status": "read"
+  },
+  {
+    "id": "think-and-grow-rich",
+    "title": "Think and Grow Rich",
+    "author": "Napoleon Hill",
+    "category": "Mindset & Self-Help",
+    "about": "Hill's 1937 study of successful people, distilled into thirteen principles of achievement.",
+    "status": "read"
+  },
+  {
+    "id": "the-science-of-getting-rich",
+    "title": "The Science of Getting Rich",
+    "author": "Wallace D. Wattles",
+    "category": "Mindset & Self-Help",
+    "about": "A 1910 classic arguing that wealth follows from a certain way of thinking and acting.",
+    "status": "read"
+  },
+  {
+    "id": "the-attractor-factor",
+    "title": "The Attractor Factor",
+    "author": "Joe Vitale",
+    "category": "Spirituality & Religion",
+    "about": "Five steps for using the law of attraction to create wealth and well-being.",
+    "status": "read"
+  },
+  {
+    "id": "the-journey-home",
+    "title": "The Journey Home",
+    "author": "Radhanath Swami",
+    "category": "Memoir & Biography",
+    "about": "The autobiography of an American swami: a young man's journey from Chicago to the Himalayas in search of spiritual truth.",
+    "status": "read"
+  },
+  {
+    "id": "shoe-dog",
+    "title": "Shoe Dog",
+    "author": "Phil Knight",
+    "category": "Memoir & Biography",
+    "about": "Nike's founder tells the story of the company's scrappy, uncertain early years.",
     "status": "read",
-    "note": "What did it change?"
+    "year": "2025"
   },
   {
-    "id": "sample-4",
-    "title": "One you gave up on",
-    "author": "Author name",
-    "status": "quit",
-    "note": "Books marked \"quit\" sit slightly crooked on the shelf. Honesty is charming."
-  },
-  {
-    "id": "sample-5",
-    "title": "A childhood favourite",
-    "author": "Author name",
+    "id": "srila-prabhupada-biography",
+    "title": "Srila Prabhupada - Biography",
+    "author": "Satsvarupa Das Goswami",
+    "category": "Memoir & Biography",
+    "about": "The biography of A. C. Bhaktivedanta Swami Prabhupada, founder of the Hare Krishna movement.",
     "status": "read",
-    "note": "Where were you when you first read it?"
+    "year": "2025"
   },
   {
-    "id": "sample-6",
-    "title": "The one you recommend most",
-    "author": "Author name",
+    "id": "tuesdays-with-morrie",
+    "title": "Tuesdays with Morrie",
+    "author": "Mitch Albom",
+    "category": "Memoir & Biography",
+    "about": "A sportswriter's weekly visits to his dying former professor, and the lessons on living they shared.",
     "status": "read",
-    "note": "Who do you give it to?"
+    "year": "2025"
   },
   {
-    "id": "sample-7",
-    "title": "Something for work",
-    "author": "Author name",
+    "id": "before-the-coffee-gets-cold",
+    "title": "Before the Coffee Gets Cold",
+    "author": "Toshikazu Kawaguchi",
+    "category": "Fiction & Literature",
+    "about": "In a small Tokyo café, customers can travel back in time, but only until their coffee goes cold.",
     "status": "read",
-    "note": "The idea you still use."
+    "year": "2025"
+  },
+  {
+    "id": "animal-farm",
+    "title": "Animal Farm",
+    "author": "George Orwell",
+    "category": "Fiction & Literature",
+    "about": "A fable of farm animals who overthrow their farmer, only to find a new tyranny in his place.",
+    "status": "read",
+    "year": "2025"
+  },
+  {
+    "id": "men-without-women",
+    "title": "Men Without Women",
+    "author": "Haruki Murakami",
+    "category": "Fiction & Literature",
+    "about": "Seven stories about men who find themselves alone after the women in their lives have gone.",
+    "status": "read",
+    "year": "2025"
+  },
+  {
+    "id": "humans",
+    "title": "Humans",
+    "author": "Matt Haig",
+    "category": "Fiction & Literature",
+    "about": "An alien takes over a Cambridge mathematician's body and slowly, reluctantly, falls for humanity.",
+    "status": "read",
+    "year": "2025"
+  },
+  {
+    "id": "1984",
+    "title": "1984",
+    "author": "George Orwell",
+    "category": "Fiction & Literature",
+    "about": "Orwell's dystopia of total surveillance, doublethink and Big Brother.",
+    "status": "read",
+    "year": "2025"
+  },
+  {
+    "id": "antifragile",
+    "title": "Antifragile",
+    "author": "Nassim Nicholas Taleb",
+    "category": "Philosophy",
+    "about": "Taleb's case for things that gain from disorder, and for building a life that benefits from shocks.",
+    "status": "reading"
+  },
+  {
+    "id": "frequently-happy",
+    "title": "Frequently Happy",
+    "author": "David Larbi",
+    "category": "Mindset & Self-Help",
+    "status": "reading"
+  },
+  {
+    "id": "the-journey-within",
+    "title": "The Journey Within",
+    "author": "Radhanath Swami",
+    "category": "Spirituality & Religion",
+    "about": "Radhanath Swami's reflections on the path of bhakti: love and devotion as a way of life.",
+    "status": "next"
   }
 ]

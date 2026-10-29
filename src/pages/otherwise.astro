@@ -1,7 +1,9 @@
 ---
 import Room from '../layouts/Room.astro';
+import { url } from '../scripts/url.js';
 // TODO: your life outside work. Add, remove or rename freely.
 const patches = [
+  { title: 'Things I grow', body: 'A balcony full of plants, each one with a name. I turned looking after them into a game called Balcony Buddies.', href: 'work/balcony-buddies', cta: 'Meet the buddies' },
   { title: 'Things I make', body: 'Cooking, drawing, knitting, code for fun? Whatever your hands do when nobody is paying you.' },
   { title: 'Places', body: 'Cities you have lived in, a trip that changed you, the café you always go back to.' },
   { title: 'Small obsessions', body: 'The niche thing you could talk about for an hour.' },
@@ -14,6 +16,7 @@ const patches = [
       <section class="patch" style={`--d:${i * 0.12}s`}>
         <h2>{p.title}</h2>
         <p>{p.body}</p>
+        {p.href && <a class="cta" href={url(p.href)}>{p.cta}</a>}
       </section>
     ))}
   </div>
@@ -25,5 +28,7 @@ const patches = [
   .patch { background: rgba(246, 243, 238, .6); padding: 1.6rem 1.5rem 1.8rem; display: grid; gap: .5rem; align-content: start; animation: grow .9s cubic-bezier(.2, .7, .2, 1) var(--d) both; }
   .patch h2 { margin: 0; font: italic 400 1.5rem/1.2 var(--display); }
   .patch p { margin: 0; color: var(--haze); }
+  .cta { justify-self: start; margin-top: .3rem; font: 400 .7rem var(--ui); letter-spacing: .18em; text-transform: uppercase; text-decoration: none; border-bottom: 1px solid var(--gilt-soft); padding-bottom: .15rem; }
+  .cta:hover { color: var(--gilt); }
   @keyframes grow { from { opacity: 0; transform: translateY(14px); } }
 </style>

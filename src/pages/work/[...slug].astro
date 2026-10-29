@@ -14,20 +14,35 @@ const { Content } = await render(project);
 const numerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
 const numeral = numerals[index] ?? String(index + 1);
 const cardName = project.data.card?.name ?? project.data.title;
+const tarot = project.data.tarot;
 ---
 <Room card="magician" title={project.data.title} intro={project.data.summary} pageTitle={project.data.title} description={project.data.summary}>
   <Fragment slot="card">
-    <HeldCard name={cardName}>
-      <SuitCard name={cardName} numeral={numeral} emblem={project.data.card?.emblem} sky={project.data.card?.sky} title={project.data.title} />
-    </HeldCard>
-    <p class="card-caption"><span>{numeral}</span> {cardName}</p>
+    {tarot
+      ? <>
+          <HeldCard file={tarot.file} name={tarot.name} />
+          <p class="card-caption"><span>{tarot.num}</span> {tarot.name}</p>
+          <p class="why">{tarot.why}</p>
+        </>
+      : <>
+          <HeldCard name={cardName}>
+            <SuitCard name={cardName} numeral={numeral} emblem={project.data.card?.emblem} sky={project.data.card?.sky} title={project.data.title} />
+          </HeldCard>
+          <p class="card-caption"><span>{numeral}</span> {cardName}</p>
+        </>}
   </Fragment>
 
   <dl class="facts">
     <div><dt>Role</dt><dd>{project.data.role}</dd></div>
     <div><dt>Year</dt><dd>{project.data.year}</dd></div>
-    {project.data.link && <div><dt>See it</dt><dd><a href={project.data.link}>Visit the project</a></dd></div>}
+    {project.data.link && <div><dt>See it</dt><dd><a href={project.data.link} target="_blank" rel="noopener">Open it</a></dd></div>}
   </dl>
+
+  {project.data.image && (
+    <figure class="shot">
+      <img src={url(project.data.image)} alt={project.data.imageAlt ?? project.data.title} loading="lazy" />
+    </figure>
+  )}
 
   {project.data.timeline.length > 0 && (
     <section class="played" aria-labelledby="played-h">
@@ -52,6 +67,9 @@ const cardName = project.data.card?.name ?? project.data.title;
 <style>
   .card-caption { margin: 0; text-align: center; font: italic 400 1rem var(--display); color: var(--haze); }
   .card-caption span { color: var(--gilt); margin-right: .4rem; }
+  .why { margin: -.4rem auto 0; max-width: 15rem; text-align: center; font: italic 400 .95rem/1.5 var(--display); color: var(--haze); }
+  .shot { margin: 0 0 3rem; display: flex; justify-content: center; }
+  .shot img { width: min(17rem, 80%); border-radius: 1.6rem; box-shadow: 0 0 0 6px var(--paper), 0 0 0 7px var(--gilt-soft), 0 2rem 2.6rem -1.4rem rgba(30, 24, 36, .55); transform: rotate(-2deg); }
   .facts { display: flex; flex-wrap: wrap; gap: 1rem 2.5rem; margin: 0 0 2.5rem; padding-bottom: 1.4rem; border-bottom: 1px solid var(--hair); }
   .facts dt { font: 500 .66rem var(--ui); letter-spacing: .2em; text-transform: uppercase; color: var(--gilt); }
   .facts dd { margin: .15rem 0 0; font: italic 400 1.2rem var(--display); }
