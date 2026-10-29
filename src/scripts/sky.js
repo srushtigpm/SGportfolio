@@ -3,10 +3,11 @@
 
 // Colours are sRGB 0–1: base mist, lilac drift, sky drift, warm drift, light from above.
 const PHASES = {
-  night: { base: [.10, .12, .21], lilac: [.21, .19, .35], sky: [.12, .23, .37], warm: [.40, .28, .40], glow: [.50, .58, .85], stars: 1 },
-  dawn:  { base: [.93, .89, .87], lilac: [.86, .77, .84], sky: [.79, .84, .91], warm: [.99, .80, .64], glow: [1., .88, .72], stars: .05 },
-  day:   { base: [.925, .91, .89], lilac: [.80, .78, .86], sky: [.76, .845, .88], warm: [.975, .855, .735], glow: [1., .97, .9], stars: 0 },
-  dusk:  { base: [.85, .76, .76], lilac: [.64, .56, .73], sky: [.58, .60, .77], warm: [.98, .66, .54], glow: [1., .74, .58], stars: .2 },
+  // an opal palette: cool pearl drifting through periwinkle, sea-glass and blush
+  night: { base: [.09, .11, .20], lilac: [.24, .18, .38], sky: [.10, .26, .36], warm: [.36, .24, .42], glow: [.50, .60, .88], stars: 1 },
+  dawn:  { base: [.94, .90, .88], lilac: [.87, .80, .91], sky: [.80, .89, .92], warm: [1., .80, .70], glow: [1., .88, .74], stars: .05 },
+  day:   { base: [.925, .93, .92], lilac: [.79, .80, .93], sky: [.77, .90, .87], warm: [.98, .84, .84], glow: [1., .96, .88], stars: 0 },
+  dusk:  { base: [.84, .77, .80], lilac: [.60, .55, .77], sky: [.55, .63, .78], warm: [.98, .68, .60], glow: [1., .75, .62], stars: .2 },
 };
 // Hour of day → phase, blended smoothly between neighbours
 const KEYS = [[0, 'night'], [4.5, 'night'], [6.5, 'dawn'], [9, 'day'], [16.5, 'day'], [18.5, 'dusk'], [20.5, 'night'], [24, 'night']];

@@ -34,8 +34,9 @@ Turned cards are remembered in the visitor's browser. The Index menu in the corn
 | Name, email, social links | `src/data/site.js` |
 | Card names and descriptions | `src/data/deck.js` |
 | About me and timeline | `src/pages/about.astro` |
-| Projects (one file each) | `src/content/work/*.md` (`card` sets its card face: `name`, `emblem` = sun, tower, bridge, key, sprout or lantern, `sky` = yellow, blue, grey or dawn; `timeline` lists the story beats) |
-| Books | `src/content/books.json` (`status`: `read`, `reading` or `quit`; `line` is a favourite quote; `thoughts` adds a second spread) |
+| Projects (one file each) | `src/content/work/*.md` (`tarot` tags a project with a real card, as Balcony Buddies has The Empress; `image` adds a screenshot; `card` sets its card face: `name`, `emblem` = sun, tower, bridge, key, sprout or lantern, `sky` = yellow, blue, grey or dawn; `timeline` lists the story beats) |
+| Books | `src/content/books.json`, imported from the Books Google Sheet. Each book has a `category` (a shelf), a `status` (`reading`, `next`, `read`, `toread` or `quit`), `about`, and optional `note`, `line`, `thoughts` and `year`. |
+| Which card keeps each genre | `src/data/shelves.js` |
 | Songs | `src/content/songs.json` (add `link` for a direct Spotify link) |
 | Blog posts (one file each) | `src/content/blog/*.md` |
 | Life outside work | `src/pages/otherwise.astro` |

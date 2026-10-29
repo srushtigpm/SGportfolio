@@ -1,7 +1,7 @@
 /* Pearl dawn: one deliberate light look across the whole site. */
 :root {
   color-scheme: light;
-  --pearl: #ebe7e1;     /* mist ground, matches the 3D fog */
+  --pearl: #e9ebe6;     /* mist ground, matches the 3D fog */
   --ink: #2b2530;       /* plum-black text */
   --haze: #6a6370;      /* quiet text */
   --gilt: #8c6c35;      /* old gold, readable on pearl */
@@ -10,7 +10,7 @@
   --hair: rgba(140, 108, 53, .3);
   --display: "Bodoni Moda", "Didot", "Bodoni 72", Georgia, serif;
   --ui: "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
-  --pool: rgba(240, 236, 230, .92);  /* soft light behind floating text */
+  --pool: rgba(236, 238, 234, .92);  /* soft light behind floating text */
   --paper: #f6f1e7;     /* book pages */
   --gutter: max(18px, env(safe-area-inset-left, 0px));
   --gutter-r: max(18px, env(safe-area-inset-right, 0px));

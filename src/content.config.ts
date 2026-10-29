@@ -29,6 +29,10 @@ const work = defineCollection({
       emblem: z.enum(['sun', 'tower', 'bridge', 'key', 'sprout', 'lantern']).default('sun'),
       sky: z.enum(['yellow', 'blue', 'grey', 'dawn']).default('yellow'),
     }).optional(),
+    // or tag the project with a real Rider-Waite card instead of a drawn face
+    tarot: z.object({ file: z.string(), num: z.string(), name: z.string(), why: z.string() }).optional(),
+    image: z.string().optional(),       // a screenshot in public/, e.g. work/my-project.webp
+    imageAlt: z.string().optional(),
     // "how it played out": the beats of the story, in order
     timeline: z.array(z.object({ when: z.string(), title: z.string(), detail: z.string().optional() })).default([]),
   }),
@@ -40,10 +44,13 @@ const books = defineCollection({
   schema: z.object({
     title: z.string(),
     author: z.string(),
-    note: z.string(),
-    line: z.string().optional(),
-    thoughts: z.string().optional(),
-    status: z.enum(['read', 'reading', 'quit']).default('read'),
+    category: z.string(),                 // must match a shelf in src/data/shelves.js
+    status: z.enum(['reading', 'next', 'read', 'toread', 'quit']).default('toread'),
+    about: z.string().optional(),         // what the book is about
+    note: z.string().optional(),          // your own words on it
+    line: z.string().optional(),          // a favourite line
+    thoughts: z.string().optional(),      // a longer reflection, shown on a second spread
+    year: z.string().optional(),          // the year you read it
   }),
 });
 

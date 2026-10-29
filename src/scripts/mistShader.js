@@ -27,10 +27,10 @@ float stars(vec2 uv){
 }
 void main(){
   vec2 asp = vec2(uRes.x/uRes.y, 1.);
-  vec2 p = (vUv - .5) * asp * 1.5;
-  vec2 m = (uMouse - .5) * asp * 1.5;
+  vec2 p = (vUv - .5) * asp * 1.15;
+  vec2 m = (uMouse - .5) * asp * 1.15;
   p += (p - m) * .06 * exp(-2.5*length(p - m));
-  float t = uTime * .03;
+  float t = uTime * .04;
   vec2 q = vec2(fbm(p + t), fbm(p + vec2(5.2, 1.3) - t));
   vec2 r = vec2(fbm(p + 3.*q + vec2(1.7, 9.2) + t*1.4), fbm(p + 3.*q + vec2(8.3, 2.8) - t*1.1));
   float f = fbm(p + 2.6*r);
@@ -38,6 +38,9 @@ void main(){
   vec3 col = mix(uBase, uLilac, smoothstep(.35, .85, f) * .75 * k);
   col = mix(col, uSky, smoothstep(.45, 1.0, length(q)) * .5 * k);
   col = mix(col, uWarm, smoothstep(.55, .95, r.x) * .55 * k);
+  // opal sheen: a faint rainbow that drifts along the folds of the mist
+  vec3 iri = .5 + .5 * cos(6.28318 * (f * 1.6 + length(r) * .8 + vec3(0., .33, .67) + t * .6));
+  col = mix(col, col * .7 + iri * .45, .07 * k * (1. - uStars * .6));
   col += uGlow * .14 * smoothstep(1.1, 0., length(vUv - vec2(.5, 1.08)));
   col += uStars * vec3(1., .97, .9) * stars(vUv) * (1. - smoothstep(.5, .85, f) * .7);
   col += mix(vec3(1., .93, .82), uGlow, .5) * .09 * exp(-3.2*length(p - m));

@@ -80,7 +80,7 @@ export function startDeck({ canvas, ui }) {
   }
 
   // ---------- Card geometry ----------
-  const CW = 1, CH = 5 / 3, CR = .05, CT = .016;
+  const CW = .82, CH = CW * 5 / 3, CR = .042, CT = .014;
   const shape = (() => {
     const s = new THREE.Shape(), x = -CW / 2, y = -CH / 2, w = CW, h = CH, r = CR;
     s.moveTo(x + r, y); s.lineTo(x + w - r, y); s.quadraticCurveTo(x + w, y, x + w, y + r);
@@ -344,7 +344,7 @@ export function startDeck({ canvas, ui }) {
     aspect = w / h; narrow = aspect < 1;
     camera.aspect = aspect;
     const tanV = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
-    ringR = narrow ? 2.6 : 3.4;
+    ringR = narrow ? 2.3 : 3.1;
     camBase.z = narrow ? Math.min(13, Math.max(9, 3.1 / (tanV * aspect))) : Math.max(9, (ringR + .9) / (tanV * aspect) * .95);
     camera.updateProjectionMatrix();
     bgU.uRes.value.set(w, h);
@@ -356,7 +356,7 @@ export function startDeck({ canvas, ui }) {
   function heldPosition() {
     const tanV = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
     // on phones the card sits in the gap between the header and the reading panel below it
-    const dist = narrow ? 5.9 : 3.7, vh = 2 * dist * tanV, vw = vh * aspect;
+    const dist = narrow ? 5.4 : 3.6, vh = 2 * dist * tanV, vw = vh * aspect;
     return held.set(camera.position.x + (narrow ? 0 : vw * .16), camera.position.y + (narrow ? vh * .09 : 0), camera.position.z - dist);
   }
 
