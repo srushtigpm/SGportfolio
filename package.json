@@ -6,6 +6,8 @@
   "description": "Srushti G's personal website: a deck of Rider-Waite cards you play through.",
   "scripts": {
     "dev": "astro dev",
+    "sync:books": "node scripts/sync-books.mjs",
+    "prebuild": "node scripts/sync-books.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check"

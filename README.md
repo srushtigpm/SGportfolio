@@ -35,13 +35,23 @@ Turned cards are remembered in the visitor's browser. The Index menu in the corn
 | Card names and descriptions | `src/data/deck.js` |
 | About me and timeline | `src/pages/about.astro` |
 | Projects (one file each) | `src/content/work/*.md` (`tarot` tags a project with a real card, as Balcony Buddies has The Empress; `image` adds a screenshot; `card` sets its card face: `name`, `emblem` = sun, tower, bridge, key, sprout or lantern, `sky` = yellow, blue, grey or dawn; `timeline` lists the story beats) |
-| Books | `src/content/books.json`, imported from the Books Google Sheet. Each book has a `category` (a shelf), a `status` (`reading`, `next`, `read`, `toread` or `quit`), `about`, and optional `note`, `line`, `thoughts` and `year`. |
-| Which card keeps each genre | `src/data/shelves.js` |
+| Books | Your **Books** Google Sheet. The site reads it on every build and once a day, so new rows appear on their own. See below. |
+| Which tarot card keeps each shelf | `src/data/shelves.js` (new categories get a card automatically) |
 | Songs | `src/content/songs.json` (add `link` for a direct Spotify link) |
 | Blog posts (one file each) | `src/content/blog/*.md` |
 | Life outside work | `src/pages/otherwise.astro` |
 
 Everything shipped now is placeholder content marked to be replaced.
+
+## The bookshelf and the Books sheet
+
+`scripts/sync-books.mjs` runs before every build (`npm run build`, or `npm run sync:books` on its own) and turns the sheet into `src/content/books.json`:
+
+- **Master List** tab: Title, Author, Description, Category, Status.
+- **Read** tab: Book Name, Author, and a ✅ (read), 📖 (reading) or 📚 (up next) mark. A row holding only a year marks the books below it as read that year. Add a **Category** column here to shelve books that aren't on the Master List; until then they sit on the "Not yet sorted" shelf.
+- Optional columns on either tab: **Note**, **Favourite line**, **Thoughts**.
+
+Shelves are your categories, exactly as written in the sheet. A new category gets its own shelf and the next free tarot card. The sheet must be shared as **Anyone with the link can view**; if it can't be read, the last saved bookshelf is kept and the build carries on. The deploy workflow also runs daily, so sheet edits show up within a day without a push.
 
 ## Running it
 
